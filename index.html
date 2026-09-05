@@ -2031,6 +2031,794 @@
             line-height: 1.6;
         }
 
+        /* ABOUT THE AUTHOR SECTION (HORIZONTAL SHOWCASE + MODAL) */
+        #section-about {
+            position: relative;
+            z-index: 2;
+            padding: 24px 0 64px;
+        }
+
+        #section-about .section-wrap {
+            max-width: 1240px;
+        }
+
+        .author-showcase {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 36px 36px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 280px 1fr 260px;
+            gap: 28px;
+            align-items: stretch;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .author-showcase::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 8%;
+            right: 8%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+            pointer-events: none;
+        }
+
+        .author-showcase:hover {
+            border-color: var(--border-accent);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        /* Col 1: Author Profile Card */
+        .author-col-profile {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding-right: 28px;
+            border-right: 1px solid var(--border);
+        }
+
+        .author-avatar-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .author-avatar-box {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-bg), rgba(34, 211, 238, 0.18));
+            border: 1px solid var(--border-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            box-shadow: 0 8px 24px var(--accent-glow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .author-avatar-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 28px var(--accent-glow);
+        }
+
+        .author-status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .author-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulseDot 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseDot {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .author-name-tag {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-1);
+            letter-spacing: -0.01em;
+            margin-bottom: 4px;
+        }
+
+        .author-sub-desc {
+            font-size: 13.5px;
+            color: var(--text-2);
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .author-pills-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .author-pill-item {
+            font-size: 11.5px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background: var(--bg-surface);
+            color: var(--text-2);
+            border: 1px solid var(--border-mid);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Col 2: Narrative Highlight & Values Grid */
+        .author-col-center {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .author-quote-card {
+            background: linear-gradient(135deg, rgba(0, 113, 227, 0.05), rgba(6, 182, 212, 0.03));
+            border: 1px solid var(--border-accent);
+            border-radius: 18px;
+            padding: 18px 22px;
+            position: relative;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .author-quote-icon {
+            font-size: 32px;
+            line-height: 1;
+            color: var(--accent);
+            opacity: 0.45;
+            font-family: Georgia, serif;
+            flex-shrink: 0;
+            margin-top: -2px;
+        }
+
+        .author-quote-lines {
+            font-size: 13.5px;
+            line-height: 1.75;
+            color: var(--text-1);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .author-values-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .author-value-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 13px 12px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .author-value-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-2px);
+            background: var(--bg-card-hover);
+        }
+
+        .author-value-card-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+        }
+
+        .author-val-icon {
+            font-size: 14px;
+            display: inline-flex;
+            flex-shrink: 0;
+        }
+
+        .author-val-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-1);
+            white-space: nowrap;
+        }
+
+        .author-val-sub {
+            font-size: 11.5px;
+            color: var(--text-3);
+            line-height: 1.4;
+        }
+
+        /* Col 3: CTA & Story Chapters Summary */
+        .author-col-action {
+            padding-left: 28px;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* DISCLAIMERS (INDEPENDENT 3RD-PARTY) */
+        .hero-disclaimer-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 7px 16px;
+            margin-top: 24px;
+            max-width: 720px;
+            text-align: left;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .hero-disclaimer-tag {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            background: var(--accent-bg);
+            border: 1px solid var(--border-accent);
+            padding: 2px 9px;
+            border-radius: 12px;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .hero-disclaimer-text {
+            font-size: 12px;
+            color: var(--text-3);
+            line-height: 1.5;
+        }
+
+        .arch-thirdparty-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-top: 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: border-color 0.3s ease;
+        }
+
+        .arch-thirdparty-card:hover {
+            border-color: var(--border-accent);
+        }
+
+        .arch-thirdparty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: var(--accent-bg);
+            border: 1px solid var(--border-accent);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .arch-thirdparty-text {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.6;
+        }
+
+        .footer-disclaimer {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-3);
+            max-width: 760px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            opacity: 0.85;
+        }
+
+        .author-story-teaser {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .teaser-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .teaser-chapters-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin: 4px 0 0;
+        }
+
+        .teaser-chapter-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12.5px;
+            color: var(--text-2);
+            font-weight: 500;
+        }
+
+        .teaser-chapter-num {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            opacity: 0.85;
+        }
+
+        .author-more-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            height: 48px;
+            padding: 0 20px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: #ffffff;
+            font-size: 14.5px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px var(--accent-glow);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 16px;
+        }
+
+        .author-more-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px var(--accent-glow);
+            filter: brightness(1.06);
+        }
+
+        .author-more-btn:active {
+            transform: translateY(0);
+        }
+
+        .author-more-btn svg {
+            transition: transform 0.2s ease;
+        }
+
+        .author-more-btn:hover svg {
+            transform: translateX(3px);
+        }
+
+        .author-action-hint {
+            text-align: center;
+            font-size: 11.5px;
+            color: var(--text-3);
+            margin-top: 10px;
+        }
+
+        /* MODAL STYLES FOR AUTHOR STORY */
+        #author-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 24px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #author-modal.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .author-modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-mid);
+            border-radius: 28px;
+            max-width: 840px;
+            width: 100%;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            transform: scale(0.96);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #author-modal.open .author-modal-box {
+            transform: scale(1);
+        }
+
+        .author-modal-header {
+            padding: 28px 36px 20px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            background: var(--bg-card);
+            flex-shrink: 0;
+        }
+
+        .author-modal-close-x {
+            position: absolute;
+            top: 24px;
+            right: 28px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .author-modal-close-x:hover {
+            background: var(--border-accent);
+            color: var(--text-1);
+            transform: rotate(90deg);
+        }
+
+        .author-modal-title {
+            font-size: clamp(22px, 2.5vw, 26px);
+            font-weight: 800;
+            color: var(--text-1);
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .author-modal-subtitle {
+            font-size: 13.5px;
+            color: var(--text-2);
+        }
+
+        .author-modal-body {
+            padding: 32px 36px;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            overscroll-behavior: contain;
+        }
+
+        .author-modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .author-modal-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .author-modal-body::-webkit-scrollbar-thumb {
+            background: var(--border-mid);
+            border-radius: 3px;
+        }
+        .author-modal-body::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        .modal-story-chapter {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px 32px;
+            position: relative;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .modal-story-chapter:hover {
+            border-color: var(--border-accent);
+        }
+
+        .author-modal-footer {
+            padding: 18px 36px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-surface);
+            flex-shrink: 0;
+        }
+
+        .author-modal-footer-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            color: var(--text-2);
+            font-weight: 500;
+        }
+
+        .author-modal-footer-btn {
+            height: 38px;
+            padding: 0 24px;
+            border-radius: 19px;
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 13.5px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .author-modal-footer-btn:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        .about-chapter-tag {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .chapter-num {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .chapter-line {
+            width: 28px;
+            height: 1px;
+            background: var(--border-accent);
+        }
+
+        .chapter-name {
+            font-size: 12.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-3);
+        }
+
+        .story-prose p {
+            font-size: 16px;
+            line-height: 1.85;
+            color: var(--text-2);
+            margin-bottom: 16px;
+            letter-spacing: -0.01em;
+        }
+
+        .story-prose p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* HIGHLIGHT 1: QUOTE */
+        .story-highlight-quote {
+            margin: 22px 0;
+            padding: 22px 26px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-bg), rgba(139, 92, 246, 0.06));
+            border-left: 4px solid var(--accent);
+            border-top: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .quote-mark {
+            font-size: 36px;
+            line-height: 1;
+            color: var(--accent);
+            opacity: 0.25;
+            position: absolute;
+            top: 10px;
+            right: 16px;
+            font-family: Georgia, serif;
+            user-select: none;
+        }
+
+        .highlight-text {
+            font-size: clamp(16.5px, 1.9vw, 19px);
+            font-weight: 700;
+            color: var(--text-1);
+            line-height: 1.6;
+        }
+
+        /* HIGHLIGHT 2: PERMANENT FREE HERO BANNER */
+        .story-free-banner {
+            margin: 24px 0;
+            border-radius: 20px;
+            padding: 32px 28px;
+            background: linear-gradient(135deg, rgba(0, 113, 227, 0.12), rgba(6, 182, 212, 0.08));
+            border: 1px solid var(--border-accent);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px var(--accent-glow);
+        }
+
+        .free-banner-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .free-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            background: var(--accent-bg);
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .free-title {
+            font-size: clamp(24px, 3vw, 32px);
+            font-weight: 800;
+            color: var(--text-1);
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .free-subtitle {
+            font-size: 15px;
+            color: var(--text-2);
+            font-weight: 500;
+        }
+
+        /* THREE COMMITMENT ITEMS */
+        .story-commitments-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0 0;
+        }
+
+        .commitment-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 18px;
+            border-radius: 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+        }
+
+        .commitment-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            box-shadow: 0 0 6px var(--accent);
+        }
+
+        .commitment-text {
+            font-size: 14.5px;
+            font-weight: 600;
+            color: var(--text-1);
+        }
+
+        /* HIGHLIGHT 3: THREE RESONANT MANTRAS */
+        .story-mantras-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin: 24px 0 0;
+        }
+
+        .mantra-card {
+            padding: 20px 16px;
+            border-radius: 16px;
+            background: linear-gradient(180deg, var(--bg-surface), var(--accent-bg));
+            border: 1px solid var(--border-accent);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .mantra-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .mantra-idx {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .mantra-content {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-1);
+            line-height: 1.5;
+        }
+
+        /* HIGHLIGHT 4: EPILOGUE PLEDGE */
+        .story-epilogue {
+            margin-top: 24px;
+            padding: 24px;
+            border-radius: 16px;
+            background: var(--bg-surface);
+            border: 1px dashed var(--border-accent);
+            text-align: center;
+        }
+
+        .epilogue-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            padding: 3px 10px;
+            border-radius: 8px;
+            background: var(--accent-bg);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .epilogue-title {
+            font-size: clamp(17px, 2.2vw, 22px);
+            font-weight: 800;
+            color: var(--text-1);
+            letter-spacing: -0.01em;
+        }
+
         /* RESPONSIVE BREAKPOINTS */
         @media (max-width: 1024px) {
             .demo-stage {
@@ -2040,6 +2828,26 @@
             .arch-grid {
                 grid-template-columns: 1fr;
                 gap: 40px;
+            }
+            .author-showcase {
+                grid-template-columns: 1fr;
+                gap: 28px;
+                padding: 30px 24px;
+            }
+            .author-col-profile {
+                padding-right: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 24px;
+            }
+            .author-col-action {
+                padding-left: 0;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                padding-top: 24px;
+            }
+            .story-mantras-container {
+                grid-template-columns: 1fr;
             }
             .demo-narrative-box {
                 height: 180px;
@@ -2090,8 +2898,65 @@
             .modal-qr-grid {
                 grid-template-columns: 1fr;
             }
+            .about-block {
+                padding: 24px 20px;
+            }
+            .story-free-banner {
+                padding: 24px 16px;
+            }
+            .author-values-strip {
+                grid-template-columns: 1fr;
+            }
+            .author-modal-box {
+                max-height: 92vh;
+                border-radius: 20px;
+            }
+            .author-modal-header {
+                padding: 20px 24px 16px;
+            }
+            .author-modal-body {
+                padding: 20px 24px;
+                gap: 20px;
+            }
+            .modal-story-chapter {
+                padding: 22px 20px;
+            }
+            .author-modal-footer {
+                padding: 14px 20px;
+            }
+            .hero-disclaimer-pill {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px 14px;
+                border-radius: 16px;
+                gap: 6px;
+            }
+            .arch-thirdparty-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 14px 16px;
+            }
             .section-wrap {
                 padding: 80px 20px;
+            }
+        }
+
+        /* ACCESSIBILITY: PREFERS-REDUCED-MOTION */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .reveal {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+            .author-status-dot {
+                animation: none !important;
             }
         }
     </style>
@@ -2122,6 +2987,7 @@
                 <a href="#section-data" class="nav-link">时序流动</a>
                 <a href="#section-download" class="nav-link">立即下载</a>
                 <a href="#section-changelog" class="nav-link">更新日志</a>
+                <a href="#section-about" class="nav-link">关于作者</a>
                 <a href="#section-sponsor" class="nav-link">赞助支持</a>
                 <a href="https://github.com/huangdungui/TD-Studio-Release" target="_blank" rel="noopener" class="nav-link">GitHub</a>
             </div>
@@ -2158,6 +3024,7 @@
         <a href="#section-data" class="nav-link">时序流动</a>
         <a href="#section-download" class="nav-link">立即下载</a>
         <a href="#section-changelog" class="nav-link">更新日志</a>
+        <a href="#section-about" class="nav-link">关于作者</a>
         <a href="#section-sponsor" class="nav-link">赞助支持</a>
         <a href="https://github.com/huangdungui/TD-Studio-Release" target="_blank" rel="noopener" class="nav-link">GitHub Release</a>
     </div>
@@ -2185,6 +3052,10 @@
                     查看 GitHub
                 </a>
             </div>
+<!--            <div class="hero-disclaimer-pill">-->
+<!--                <span class="hero-disclaimer-tag">独立第三方项目</span>-->
+<!--                <span class="hero-disclaimer-text">TD Studio 是独立开发的第三方 TDengine 客户端，与 TDengine 官方不存在隶属、代理、授权或合作关系。TDengine® 是其相关权利人的商标。</span>-->
+<!--            </div>-->
         </div>
 
         <div class="hero-window-stage">
@@ -2675,7 +3546,7 @@
                             </div>
                             <div>
                                 <div class="pillar-title">零埋点追踪 &middot; 零数据上传</div>
-                                <div class="pillar-desc">代码中绝无任何埋点分析 SDK 或行为遥测探针。您的数据库地址、用户凭据、SQL 查询语句及结果集均 100% 留在本机，绝不上报云端。</div>
+                                <div class="pillar-desc">客户端内置零埋点分析 SDK 或行为遥测探针。您的数据库地址、用户凭据、SQL 查询语句及结果集均 100% 留在本机，绝不上报云端。</div>
                             </div>
                         </div>
                     </div>
@@ -2808,6 +3679,21 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Third-Party Independent Project Statement -->
+            <div class="arch-thirdparty-card reveal">
+                <div class="arch-thirdparty-badge">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>独立第三方项目</span>
+                </div>
+                <div class="arch-thirdparty-text">
+                    TD Studio 由独立开发者维护，并非 TDengine 官方产品。本项目通过 TDengine 数据库提供的连接能力与 TDengine 数据库进行交互，不代表 TDengine 官方立场。
+                </div>
+            </div>
         </div>
     </section>
 
@@ -2878,13 +3764,137 @@
         </div>
     </section>
 
+    <!-- ABOUT THE AUTHOR -->
+    <section id="section-about">
+        <div class="section-wrap">
+            <div class="section-header reveal">
+                <div class="section-eyebrow">ABOUT THE AUTHOR</div>
+                <h2 class="section-title">关于作者</h2>
+                <p class="section-subtitle">一名工业数据程序员的初心与坚持 · 业余独立开发 · 永久免费承诺</p>
+            </div>
+
+            <div class="author-showcase reveal">
+                <!-- Col 1: Author Profile -->
+                <div class="author-col-profile">
+                    <div>
+                        <div class="author-avatar-row">
+                            <div class="author-avatar-box">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="author-status-pill">
+                                <span class="author-status-dot"></span>
+                                <span>持续维护中</span>
+                            </div>
+                        </div>
+                        <div class="author-title-group">
+                            <div class="author-name-tag">TD Studio 独立开发者</div>
+                            <div class="author-sub-desc">工业数据 &amp; 软件开发程序员</div>
+                        </div>
+                    </div>
+
+                    <div class="author-pills-wrap">
+                        <span class="author-pill-item">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                            TDengine 深度用户
+                        </span>
+                        <span class="author-pill-item">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            业余独立开发
+                        </span>
+                        <span class="author-pill-item">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                            永久免费承诺
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quote & Core Principles Grid -->
+                <div class="author-col-center">
+                    <div class="author-quote-card">
+                        <div class="author-quote-icon">“</div>
+                        <div class="author-quote-lines">
+                            因为长期使用，所以产生想法；<br>
+                            因为喜欢，所以开始开发；<br>
+                            因为觉得值得，所以希望一直做下去。
+                        </div>
+                    </div>
+
+                    <div class="author-values-strip">
+                        <div class="author-value-card">
+                            <div class="author-value-card-header">
+                                <span class="author-val-icon">💎</span>
+                                <span class="author-val-title">零商业化负担</span>
+                            </div>
+                            <div class="author-val-sub">永久免费 · 无收费会员 · 无隐藏功能锁</div>
+                        </div>
+                        <div class="author-value-card">
+                            <div class="author-value-card-header">
+                                <span class="author-val-icon">⚡</span>
+                                <span class="author-val-title">敏捷持续更新</span>
+                            </div>
+                            <div class="author-val-sub">发现问题即修复 · 紧跟 TDengine 官方</div>
+                        </div>
+                        <div class="author-value-card">
+                            <div class="author-value-card-header">
+                                <span class="author-val-icon">🎯</span>
+                                <span class="author-val-title">专注使用体验</span>
+                            </div>
+                            <div class="author-val-sub">做顺手工具 · 深度贴合工业时序数据</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 3: CTA & Story Chapters Summary -->
+                <div class="author-col-action">
+                    <div class="author-story-teaser">
+                        <div class="teaser-badge">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            4 个篇章完整叙事
+                        </div>
+                        <ul class="teaser-chapters-list">
+                            <li class="teaser-chapter-item">
+                                <span class="teaser-chapter-num">01</span>
+                                <span>结缘与认同</span>
+                            </li>
+                            <li class="teaser-chapter-item">
+                                <span class="teaser-chapter-num">02</span>
+                                <span>初心与诞生</span>
+                            </li>
+                            <li class="teaser-chapter-item">
+                                <span class="teaser-chapter-num">03</span>
+                                <span>原则与承诺</span>
+                            </li>
+                            <li class="teaser-chapter-item">
+                                <span class="teaser-chapter-num">04</span>
+                                <span>期待与致谢</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <button class="author-more-btn" id="open-author-modal">
+                            <span>查看更多介绍</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                        <div class="author-action-hint">点击展开独立开发完整心路历程</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- SPONSOR -->
     <section id="section-sponsor">
         <div class="section-wrap" style="padding-bottom:40px;">
             <div class="section-header reveal">
                 <div class="section-eyebrow">SUPPORT THE PROJECT</div>
                 <h2 class="section-title">支持 TD Studio 的持续开发</h2>
-                <p class="section-subtitle">TD Studio 是一个永久免费且开源的独立项目。如果您觉得它提升了您的工作效率，欢迎赞助一杯咖啡，支持项目的长期迭代！</p>
+                <p class="section-subtitle">TD Studio 是一款个人独立开发、面向社区永久免费使用的数据库桌面客户端。如果您觉得它提升了您的工作效率，欢迎赞助支持，助力项目的持续维护与迭代！</p>
                 <div style="margin-top:32px;">
                     <button class="sponsor-cta-btn" id="open-sponsor-modal">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -2950,7 +3960,7 @@
                     </svg>
                 </div>
                 <h2 style="font-size:28px; font-weight:800; color:var(--text-1); margin-bottom:12px;">免费发布于 GitHub Release，欢迎 Star</h2>
-                <p style="font-size:16px; color:var(--text-2); max-width:560px; margin:0 auto;">TD Studio 发行版制品与更新版本均公开托管于 GitHub Release。欢迎 Star 关注最新动态，或提交 Issue 提出宝贵意见！</p>
+                <p style="font-size:16px; color:var(--text-2); max-width:560px; margin:0 auto;">TD Studio 软件安装包与最新发版动态均托管于 GitHub Release。欢迎 Star 关注最新版本，或提交 Issue 反馈使用建议！</p>
                 <div class="github-actions">
                     <a href="https://github.com/huangdungui/TD-Studio-Release" target="_blank" rel="noopener" class="btn-primary">
                         访问 Release 制品库
@@ -2966,10 +3976,14 @@
             <a href="#hero">回到顶部</a>
             <a href="#section-demo">交互演示</a>
             <a href="#section-download">立即下载</a>
+            <a href="#section-about">关于作者</a>
             <a href="https://github.com/huangdungui/TD-Studio-Release" target="_blank" rel="noopener">GitHub</a>
             <a href="#section-sponsor">赞助鸣谢</a>
         </div>
-        <div>&copy; 2026 TD Studio. 为 TDengine 而生. 遵循开源许可协议.</div>
+        <div>&copy; 2026 TD Studio. 为 TDengine 而生. 个人独立开发 &middot; 永久免费使用.</div>
+        <div class="footer-disclaimer">
+            TD Studio 是独立的第三方客户端项目，与 TDengine 官方不存在隶属、代理、授权或合作关系。TDengine® 为其相关权利人的商标。
+        </div>
     </footer>
 
     <!-- SPONSOR MODAL -->
@@ -2986,7 +4000,7 @@
                     自愿捐赠 &middot; 软件永久免费 &middot; 绝不强制
                 </div>
                 <div class="modal-notice-text">
-                    TD Studio 是一款面向社区完全免费开放的专业工具。所有核心功能均无限制，绝无付费解锁限制。赞助完全自愿，无论赞助与否，您均可永久免费使用全部功能。
+                    TD Studio 是一款面向社区永久免费的专业工具。所有核心功能均无限制，绝无付费解锁限制。赞助完全自愿，无论赞助与否，您均可永久免费使用全部功能。
                 </div>
             </div>
 
@@ -3016,6 +4030,149 @@
             <button style="width:100%; height:44px; border-radius:22px; background:var(--accent); color:#fff; font-weight:600; font-size:14px; border:none; cursor:pointer; margin-top:12px;" id="modal-close-btn">
                 完成支持
             </button>
+        </div>
+    </div>
+
+    <!-- AUTHOR STORY MODAL -->
+    <div id="author-modal" role="dialog" aria-modal="true" aria-labelledby="author-modal-title">
+        <div class="author-modal-box">
+            <!-- Close Button -->
+            <button class="author-modal-close-x" id="author-modal-close-x" aria-label="关闭">&times;</button>
+
+            <!-- Modal Header -->
+            <div class="author-modal-header">
+                <div class="section-eyebrow" style="margin-bottom:6px;">ABOUT THE AUTHOR</div>
+                <h3 id="author-modal-title" class="author-modal-title">关于作者与 TD Studio 的故事</h3>
+                <p class="author-modal-subtitle">一名工业数据程序员的初心与坚持 · 独立开发心路历程</p>
+            </div>
+
+            <!-- Modal Scrollable Body -->
+            <div class="author-modal-body">
+                <!-- Chapter 1: 结缘与认同 -->
+                <div class="modal-story-chapter">
+                    <div class="about-chapter-tag">
+                        <span class="chapter-num">01</span>
+                        <span class="chapter-line"></span>
+                        <span class="chapter-name">结缘与认同</span>
+                    </div>
+                    <div class="story-prose">
+                        <p>我是 TD Studio 的独立开发者，也是一名长期从事软件开发和工业数据相关工作的程序员。</p>
+                        <p>因为工作的关系，我在日常开发和实际业务中几乎每天都会接触 TDengine。对我而言，TDengine 不只是一款数据库，更是一款真正让我感受到国产软件技术实力的产品。</p>
+                        <p>几年前，我有幸参加过 TDengine 团队举办的线下公开交流活动，也有幸见到了 TDengine 的创始人。那次经历让我印象很深。</p>
+                        <p>技术上的专业和实力自不必多说，更让我印象深刻的是他的亲和力——一位在我看来非常优秀、非常厉害的前辈，却又十分和蔼、平易近人。</p>
+                        <p>从那以后，我对 TDengine 有了更深的认同。</p>
+                        <p>TDengine 是一款非常优秀的国产时序数据库，而它坚持开源开放的理念，也让我觉得这样的技术和理念值得被更多人了解、使用和传播。</p>
+                    </div>
+                </div>
+
+                <!-- Chapter 2: 初心与诞生 -->
+                <div class="modal-story-chapter">
+                    <div class="about-chapter-tag">
+                        <span class="chapter-num">02</span>
+                        <span class="chapter-line"></span>
+                        <span class="chapter-name">初心与诞生</span>
+                    </div>
+                    <div class="story-prose">
+                        <p>于是，我产生了一个很简单的想法：</p>
+                    </div>
+                    <!-- Highlight 1: The Core Spark -->
+                    <div class="story-highlight-quote">
+                        <div class="quote-mark">“</div>
+                        <div class="highlight-text">「既然我每天都在使用 TDengine，为什么不自己做一款真正符合自己使用习惯的客户端？」</div>
+                    </div>
+                    <div class="story-prose">
+                        <p>这个想法最终变成了 TD Studio。</p>
+                        <p>我希望它能够拥有现代化的界面、简单舒服的操作方式，同时又足够稳定、实用，能够真正成为一个每天都愿意打开的工具。</p>
+                    </div>
+                </div>
+
+                <!-- Chapter 3: 原则与承诺 -->
+                <div class="modal-story-chapter">
+                    <div class="about-chapter-tag">
+                        <span class="chapter-num">03</span>
+                        <span class="chapter-line"></span>
+                        <span class="chapter-name">原则与承诺</span>
+                    </div>
+                    <div class="story-prose">
+                        <p>我也不希望它从一开始就带着商业目的。</p>
+                        <p>所以从项目开始的那一天，我就给自己定下了一个很明确的原则：</p>
+                    </div>
+                    <!-- Highlight 2: Permanent Free Hero Callout -->
+                    <div class="story-free-banner">
+                        <div class="free-banner-inner">
+                            <div class="free-tag">CORE PRINCIPLE</div>
+                            <div class="free-title">「TD Studio，永久免费。」</div>
+                            <div class="free-subtitle">不收费，不做会员，不通过功能限制向用户收费。</div>
+                        </div>
+                    </div>
+                    <div class="story-prose">
+                        <p>它只是我利用业余时间做的一款软件。未来我也会继续使用 TDengine，而只要我还在使用、还在开发，我就会继续维护 TD Studio。</p>
+                    </div>
+                    <div class="story-commitments-grid">
+                        <div class="commitment-item">
+                            <div class="commitment-dot"></div>
+                            <div class="commitment-text">发现问题，就修复问题；</div>
+                        </div>
+                        <div class="commitment-item">
+                            <div class="commitment-dot"></div>
+                            <div class="commitment-text">使用过程中有新的想法，就不断改进；</div>
+                        </div>
+                        <div class="commitment-item">
+                            <div class="commitment-dot"></div>
+                            <div class="commitment-text">随着 TDengine 的发展，也会尽可能跟进新的版本和能力。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chapter 4: 期待与致谢 -->
+                <div class="modal-story-chapter">
+                    <div class="about-chapter-tag">
+                        <span class="chapter-num">04</span>
+                        <span class="chapter-line"></span>
+                        <span class="chapter-name">期待与致谢</span>
+                    </div>
+                    <div class="story-prose">
+                        <p>我知道，一个人的力量其实很有限，TD Studio 也不可能一开始就做到完美。</p>
+                        <p>但我希望它能够慢慢变好。</p>
+                        <p>也许有一天，会有越来越多的人因为 TD Studio，更方便地使用 TDengine；也希望这款小小的软件，能够成为我向 TDengine 这款优秀国产数据库表达的一点感谢。</p>
+                    </div>
+
+                    <!-- Highlight 3: Three Resonant Mantras -->
+                    <div class="story-mantras-container">
+                        <div class="mantra-card">
+                            <span class="mantra-idx">01</span>
+                            <div class="mantra-content">「因为长期使用，所以产生想法。」</div>
+                        </div>
+                        <div class="mantra-card">
+                            <span class="mantra-idx">02</span>
+                            <div class="mantra-content">「因为喜欢，所以开始开发。」</div>
+                        </div>
+                        <div class="mantra-card">
+                            <span class="mantra-idx">03</span>
+                            <div class="mantra-content">「因为觉得值得，所以希望一直做下去。」</div>
+                        </div>
+                    </div>
+
+                    <div class="story-prose" style="margin-top: 28px;">
+                        <p>感谢 TDengine，也感谢每一位愿意使用 TD Studio 的朋友。</p>
+                    </div>
+
+                    <!-- Highlight 4: Final Sign-off Pledge -->
+                    <div class="story-epilogue">
+                        <div class="epilogue-badge">PLEDGE</div>
+                        <div class="epilogue-title">「TD Studio，永久免费，并会持续更新。」</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="author-modal-footer">
+                <div class="author-modal-footer-status">
+                    <span class="author-status-dot"></span>
+                    <span>永久免费 · 持续维护中</span>
+                </div>
+                <button class="author-modal-footer-btn" id="author-modal-bottom-close">完成阅读</button>
+            </div>
         </div>
     </div>
 
@@ -3542,8 +4699,8 @@
                         os: 'mac',
                         platform: 'macOS',
                         arch: 'Apple Silicon',
-                        desc: 'M1 / M2 / M3 / M4 原生构建',
-                        btnLabel: '下载 Apple Silicon 版',
+                        desc: 'M1 / M2 / M3 / M4 / M5 原生构建',
+                        btnLabel: '下载 Apple Silicon 版 (.dmg)',
                         icon: '<svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.96.04-2.16.65-2.84 1.44-.61.7-.13 1.77.16 2.82 1.08.09 2.05-.64 2.67-1.39z"/></svg>'
                     },
                     {
@@ -3552,7 +4709,7 @@
                         platform: 'macOS',
                         arch: 'Intel x86_64',
                         desc: 'Intel 处理器通用构建',
-                        btnLabel: '下载 Intel x64 版',
+                        btnLabel: '下载 Intel x64 版 (.dmg)',
                         icon: '<svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.96.04-2.16.65-2.84 1.44-.61.7-.13 1.77.16 2.82 1.08.09 2.05-.64 2.67-1.39z"/></svg>'
                     },
                     {
@@ -3572,6 +4729,14 @@
                 configs.forEach(function (p) {
                     var pData = platforms[p.key] || {};
                     var url = pData.url || 'https://github.com/huangdungui/TD-Studio-Release/releases/latest';
+
+                    // Convert macOS packages from .tar.gz to .dmg as requested
+                    if (p.key === 'darwin-aarch64') {
+                        url = url.replace(/TD-Studio[_-]([0-9.]+)[_-]darwin-aarch64\.tar\.gz$/, 'TD-Studio-$1-darwin-aarch64.dmg');
+                    } else if (p.key === 'darwin-x86_64') {
+                        url = url.replace(/TD-Studio[_-]([0-9.]+)[_-]darwin-x86_64\.tar\.gz$/, 'TD-Studio-$1-darwin-x86_64.dmg');
+                    }
+
                     var isDetected = (p.os === detected);
 
                     var card = document.createElement('div');
@@ -3624,8 +4789,8 @@
                             pub_date: '2026-09-05T07:31:27.397Z',
                             notes: 'TD Studio v0.1.1\n\u00b7 升级为全屏沉浸式数据空间动态视觉\n\u00b7 交互式滚动演进与 Canvas 数据流粒子网络\n\u00b7 原生支持 macOS (Apple Silicon & Intel) 及 Windows x64',
                             platforms: {
-                                'darwin-aarch64': { url: 'https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD-Studio_0.1.1_darwin-aarch64.tar.gz' },
-                                'darwin-x86_64': { url: 'https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD-Studio_0.1.1_darwin-x86_64.tar.gz' },
+                                'darwin-aarch64': { url: 'https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD-Studio-0.1.1-darwin-aarch64.dmg' },
+                                'darwin-x86_64': { url: 'https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD-Studio-0.1.1-darwin-x86_64.dmg' },
                                 'windows-x86_64': { url: 'https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD Studio_0.1.1_x64-setup.exe' }
                             }
                         };
@@ -3764,6 +4929,41 @@
                 });
             }
 
+            function initAuthorModal() {
+                var overlay = document.getElementById('author-modal');
+                var openBtn = document.getElementById('open-author-modal');
+                var closeX = document.getElementById('author-modal-close-x');
+                var bottomClose = document.getElementById('author-modal-bottom-close');
+
+                function openModal() {
+                    if (!overlay) return;
+                    overlay.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                }
+
+                function closeModal() {
+                    if (!overlay) return;
+                    overlay.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+
+                if (openBtn) openBtn.addEventListener('click', openModal);
+                if (closeX) closeX.addEventListener('click', closeModal);
+                if (bottomClose) bottomClose.addEventListener('click', closeModal);
+
+                if (overlay) {
+                    overlay.addEventListener('click', function (e) {
+                        if (e.target === overlay) closeModal();
+                    });
+                }
+
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+                        closeModal();
+                    }
+                });
+            }
+
             function countUp(el, target, prefix, duration) {
                 prefix = prefix || '';
                 duration = duration || 1500;
@@ -3798,6 +4998,7 @@
                 initReveal();
                 initChartAnimations();
                 initModal();
+                initAuthorModal();
                 initCountUp();
             });
         })();
