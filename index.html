@@ -1,10 +1,3807 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN" data-theme="light">
+
 <head>
-    <meta charset="UTF-8">
-    <title>TD Studio Updates</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TD Studio — 专业的 TDengine 数据库客户端</title>
+    <meta name="description"
+        content="TD Studio 是一款现代化、高性能、永久免费的 TDengine 数据库桌面客户端，为 TDengine 3.x 而生。支持 macOS 和 Windows。" />
+    <meta property="og:title" content="TD Studio — 专业的 TDengine 数据库客户端" />
+    <meta property="og:description" content="TD Studio 是一款现代化、高性能、永久免费的 TDengine 数据库桌面客户端。" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/png" href="./assets/image/app-icon.png" />
+    <link rel="apple-touch-icon" href="./assets/image/app-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-alt: #f8f9fa;
+            --bg-surface: rgba(255, 255, 255, 0.72);
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --bg-card-hover: rgba(255, 255, 255, 0.95);
+            --bg-code: #16181d;
+            --text-1: #0f172a;
+            --text-2: #475569;
+            --text-3: #94a3b8;
+            --border: rgba(15, 23, 42, 0.08);
+            --border-mid: rgba(15, 23, 42, 0.14);
+            --border-accent: rgba(0, 113, 227, 0.3);
+            --accent: #0071e3;
+            --accent-glow: rgba(0, 113, 227, 0.22);
+            --accent-bg: rgba(0, 113, 227, 0.08);
+            --accent-hover: #0077ed;
+            --cyan: #06b6d4;
+            --purple: #8b5cf6;
+            --nav-bg: rgba(255, 255, 255, 0.78);
+            --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06);
+            --card-shadow-hover: 0 20px 40px -12px rgba(0, 113, 227, 0.14);
+            --window-shadow: 0 35px 80px -20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+            --aura-opacity: 0.18;
+        }
+
+        [data-theme="dark"] {
+            --bg: #030408;
+            --bg-alt: #07090e;
+            --bg-surface: rgba(12, 16, 26, 0.65);
+            --bg-card: rgba(15, 20, 32, 0.75);
+            --bg-card-hover: rgba(20, 27, 44, 0.85);
+            --bg-code: #0b0e14;
+            --text-1: #f8fafc;
+            --text-2: #94a3b8;
+            --text-3: #64748b;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-mid: rgba(255, 255, 255, 0.15);
+            --border-accent: rgba(41, 151, 255, 0.4);
+            --accent: #2997ff;
+            --accent-glow: rgba(41, 151, 255, 0.35);
+            --accent-bg: rgba(41, 151, 255, 0.12);
+            --accent-hover: #47a6ff;
+            --cyan: #22d3ee;
+            --purple: #a78bfa;
+            --nav-bg: rgba(3, 4, 8, 0.82);
+            --card-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+            --card-shadow-hover: 0 25px 50px -12px rgba(41, 151, 255, 0.22);
+            --window-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 50px -10px rgba(41, 151, 255, 0.25);
+            --aura-opacity: 0.45;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "PingFang SC", "Helvetica Neue", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-1);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* Canvas Particle Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Atmospheric Glow Layer */
+        #bg-atmosphere {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .atmo-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(130px);
+            will-change: transform;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .atmo-1 {
+            width: 750px;
+            height: 750px;
+            background: radial-gradient(circle, var(--accent) 0%, rgba(0, 113, 227, 0) 70%);
+            top: 5%;
+            left: 50%;
+            margin-left: -375px;
+            opacity: var(--aura-opacity);
+        }
+
+        .atmo-2 {
+            width: 650px;
+            height: 650px;
+            background: radial-gradient(circle, var(--cyan) 0%, rgba(6, 182, 212, 0) 70%);
+            top: 45%;
+            right: -150px;
+            opacity: calc(var(--aura-opacity) * 0.7);
+        }
+
+        .atmo-3 {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--purple) 0%, rgba(139, 92, 246, 0) 70%);
+            top: 75%;
+            left: -200px;
+            opacity: calc(var(--aura-opacity) * 0.75);
+        }
+
+        /* Content layer sits on top of particles & atmosphere */
+        .content-layer,
+        nav,
+        section,
+        footer,
+        #sponsor-modal {
+            position: relative;
+            z-index: 2;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Navigation */
+        #nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 52px;
+            background: var(--nav-bg);
+            backdrop-filter: saturate(180%) blur(24px);
+            -webkit-backdrop-filter: saturate(180%) blur(24px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .nav-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            color: var(--text-1);
+        }
+
+        .nav-logo-img {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            object-fit: cover;
+            box-shadow: 0 2px 8px var(--accent-glow);
+            flex-shrink: 0;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link {
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-2);
+            border-radius: 8px;
+            transition: color 0.2s, background-color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--text-1);
+            background: rgba(125, 125, 125, 0.08);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-theme-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-2);
+            transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+        }
+
+        .nav-theme-btn:hover {
+            color: var(--text-1);
+            border-color: var(--border-mid);
+            background: rgba(125, 125, 125, 0.08);
+        }
+
+        .nav-download-btn {
+            height: 32px;
+            padding: 0 16px;
+            border-radius: 16px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            box-shadow: 0 2px 10px var(--accent-glow);
+        }
+
+        .nav-download-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            color: var(--text-1);
+        }
+
+        .nav-hamburger span {
+            width: 20px;
+            height: 2px;
+            background: currentColor;
+            border-radius: 2px;
+            transition: transform 0.2s;
+        }
+
+        .nav-links-mobile {
+            display: none;
+            position: fixed;
+            top: 52px;
+            left: 0;
+            right: 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 99;
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-links-mobile.open {
+            display: flex;
+        }
+
+        /* HERO SECTION */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 130px 24px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 820px;
+            margin: 0 auto;
+            will-change: transform, opacity;
+            transition: transform 0.1s linear, opacity 0.1s linear;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-bg);
+            border: 1px solid var(--border-accent);
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            backdrop-filter: blur(12px);
+        }
+
+        .hero-eyebrow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulse 2.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .hero-title {
+            font-size: clamp(52px, 7.5vw, 88px);
+            font-weight: 800;
+            letter-spacing: -2.5px;
+            line-height: 1.05;
+            color: var(--text-1);
+            margin-bottom: 22px;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            background: linear-gradient(180deg, var(--text-1) 20%, var(--text-2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 2.4vw, 24px);
+            font-weight: 400;
+            color: var(--text-2);
+            max-width: 620px;
+            margin: 0 auto 38px;
+            line-height: 1.45;
+            letter-spacing: -0.3px;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 48px;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 48px;
+            padding: 0 28px;
+            border-radius: 24px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 28px var(--accent-glow);
+        }
+
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 48px;
+            padding: 0 26px;
+            border-radius: 24px;
+            background: var(--bg-surface);
+            color: var(--text-1);
+            font-size: 15px;
+            font-weight: 500;
+            border: 1px solid var(--border-mid);
+            backdrop-filter: blur(16px);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, background-color 0.2s;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--text-2);
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Window Stage */
+        .hero-window-stage {
+            position: relative;
+            width: 100%;
+            max-width: 1040px;
+            margin: 0 auto;
+            perspective: 1400px;
+            z-index: 2;
+        }
+
+        .hero-window-aura {
+            position: absolute;
+            inset: -60px -40px;
+            background: radial-gradient(ellipse at 50% 50%, var(--accent-glow) 0%, rgba(34, 211, 238, 0.08) 45%, transparent 75%);
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.8;
+            transform: translateY(20px);
+        }
+
+        .hero-window {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 1px solid var(--border-mid);
+            box-shadow: var(--window-shadow);
+            overflow: hidden;
+            transform-origin: 50% 10%;
+            transform: perspective(1400px) rotateX(4deg);
+            will-change: transform, opacity;
+            transition: box-shadow 0.4s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        /* App Window Components (Hero & Demo) */
+        .win-titlebar {
+            height: 38px;
+            background: rgba(125, 125, 125, 0.06);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .win-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .win-dot.r { background: #ff5f57; }
+        .win-dot.y { background: #febc2e; }
+        .win-dot.g { background: #28c840; }
+
+        .win-title-text {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-3);
+            margin-left: 10px;
+            font-family: "JetBrains Mono", monospace;
+            letter-spacing: -0.2px;
+        }
+
+        .win-layout {
+            display: flex;
+            height: 480px;
+            text-align: left;
+        }
+
+        .win-sidebar {
+            width: 220px;
+            background: rgba(125, 125, 125, 0.03);
+            border-right: 1px solid var(--border);
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .win-sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .win-sidebar-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--text-3);
+            padding: 0 8px 6px;
+        }
+
+        .win-db-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-2);
+            cursor: pointer;
+            font-family: "JetBrains Mono", monospace;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .win-db-item:hover {
+            background: rgba(125, 125, 125, 0.08);
+            color: var(--text-1);
+        }
+
+        .win-db-item.active {
+            background: var(--accent-bg);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .win-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        .win-tabs {
+            height: 36px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-end;
+            padding: 0 12px;
+            gap: 2px;
+            background: rgba(125, 125, 125, 0.02);
+        }
+
+        .win-tab {
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-3);
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .win-tab.active {
+            color: var(--text-1);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-bottom-color: var(--bg);
+            font-weight: 600;
+        }
+
+        .win-editor {
+            height: 130px;
+            padding: 16px 20px;
+            background: var(--bg-code);
+            color: #d4d4d4;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 12.5px;
+            line-height: 1.7;
+            overflow-y: auto;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .win-editor .comment { color: #6b7280; }
+        .win-editor .kw { color: #f43f5e; font-weight: 600; }
+        .win-editor .fn { color: #38bdf8; }
+        .win-editor .tbl { color: #a78bfa; }
+        .win-editor .num { color: #fbbf24; }
+        .win-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: var(--accent);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .win-toolbar {
+            height: 34px;
+            background: rgba(125, 125, 125, 0.04);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .win-run-btn {
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            background: #10b981;
+            padding: 3px 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .win-toolbar-label {
+            font-size: 11px;
+            color: var(--text-3);
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .win-results {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--bg);
+        }
+
+        .win-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11.5px;
+        }
+
+        .win-table th {
+            text-align: left;
+            padding: 8px 16px;
+            background: rgba(125, 125, 125, 0.04);
+            border-bottom: 1px solid var(--border);
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-3);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .win-table td {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+        }
+
+        .win-table tr:hover td {
+            background: rgba(125, 125, 125, 0.03);
+        }
+
+        .win-table .td-ts { color: var(--accent); }
+        .win-table .td-val { color: var(--text-1); font-weight: 500; }
+
+        .win-statusbar {
+            height: 26px;
+            background: rgba(125, 125, 125, 0.05);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 16px;
+            font-size: 10.5px;
+            color: var(--text-3);
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .win-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 6px #10b981;
+        }
+
+        /* 400VH STICKY DEMO SECTION */
+        #section-demo {
+            height: 400vh;
+            position: relative;
+            background: transparent;
+        }
+
+        .demo-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--cyan), var(--purple));
+            width: 0%;
+            z-index: 20;
+            transition: width 0.1s linear;
+        }
+
+        .demo-stage {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 48px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Demo Left: Floating Narrative Panels */
+        .demo-narrative-box {
+            position: relative;
+            height: 340px;
+            display: flex;
+            align-items: center;
+        }
+
+        .demo-step-panel {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .demo-step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .demo-step-title {
+            font-size: clamp(28px, 3.5vw, 40px);
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            line-height: 1.15;
+            color: var(--text-1);
+            margin-bottom: 16px;
+        }
+
+        .demo-step-desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-2);
+            margin-bottom: 24px;
+        }
+
+        .demo-step-indicators {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .demo-indicator-pill {
+            height: 4px;
+            width: 24px;
+            border-radius: 2px;
+            background: var(--border-mid);
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .demo-indicator-pill.active {
+            width: 44px;
+            background: var(--accent);
+        }
+
+        /* Demo Right: Hero Object Window Stage */
+        .demo-window-container {
+            position: relative;
+            width: 100%;
+            perspective: 1200px;
+        }
+
+        .demo-visual-card {
+            position: relative;
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 1px solid var(--border-mid);
+            box-shadow: var(--window-shadow);
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            height: 520px;
+        }
+
+        .demo-visual-panel {
+            position: absolute;
+            inset: 38px 0 0 0;
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            background: var(--bg);
+        }
+
+        /* Chart Canvas inside Demo Panel 2 */
+        .demo-chart-box {
+            flex: 1;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: var(--bg-code);
+        }
+
+        .demo-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .demo-chart-tag {
+            font-size: 11px;
+            font-family: "JetBrains Mono", monospace;
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.12);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .demo-chart-metrics {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: "JetBrains Mono", monospace;
+            color: #fff;
+        }
+
+        .demo-chart-metrics span {
+            font-size: 14px;
+            font-weight: 400;
+            color: #94a3b8;
+            margin-left: 6px;
+        }
+
+        /* Schema Tree inside Demo Panel 3 */
+        .demo-schema-tree {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: var(--bg);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 12.5px;
+        }
+
+        .tree-node {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            color: var(--text-2);
+            transition: background 0.15s;
+        }
+
+        .tree-node:hover {
+            background: rgba(125, 125, 125, 0.06);
+            color: var(--text-1);
+        }
+
+        .tree-node.highlight {
+            background: var(--accent-bg);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* COMMON SECTION STYLING (Apple / OpenAI De-cardified) */
+        .section-wrap {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 120px 24px;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto 72px;
+        }
+
+        .section-eyebrow {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .section-title {
+            font-size: clamp(34px, 4.8vw, 56px);
+            font-weight: 800;
+            letter-spacing: -1.8px;
+            line-height: 1.1;
+            color: var(--text-1);
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            font-size: clamp(16px, 2vw, 20px);
+            font-weight: 400;
+            color: var(--text-2);
+            line-height: 1.55;
+            letter-spacing: -0.2px;
+        }
+
+        /* FEATURES SECTION (Bento Grid with Glass Surfaces) */
+        #section-features {
+            background: transparent;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        .bento-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.25s;
+            box-shadow: var(--card-shadow);
+        }
+
+        .bento-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-accent);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .col-12 { grid-column: span 12; }
+        .col-8 { grid-column: span 8; }
+        .col-7 { grid-column: span 7; }
+        .col-6 { grid-column: span 6; }
+        .col-5 { grid-column: span 5; }
+        .col-4 { grid-column: span 4; }
+
+        .bento-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--accent-bg);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .bento-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-1);
+            margin-bottom: 12px;
+        }
+
+        .bento-desc {
+            font-size: 15px;
+            color: var(--text-2);
+            line-height: 1.6;
+        }
+
+        /* STATS SECTION (Floating Numbers in Data Space) */
+        #section-stats {
+            padding: 60px 24px 100px;
+            background: transparent;
+        }
+
+        .stats-stage {
+            max-width: 960px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 24px 16px;
+            position: relative;
+        }
+
+        .stat-num {
+            font-size: clamp(48px, 6vw, 76px);
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 1;
+            margin-bottom: 12px;
+            font-family: "JetBrains Mono", monospace;
+            background: linear-gradient(135deg, var(--text-1) 10%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-1);
+            margin-bottom: 4px;
+        }
+
+        .stat-sub {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+
+        /* DATA SCENE SECTION (Immersive Live Metric Stream) */
+        #section-data {
+            background: var(--bg-alt);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-visual-wrapper {
+            background: var(--bg-code);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 32px;
+            box-shadow: var(--window-shadow);
+            margin-top: 40px;
+        }
+
+        .data-stream-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: #f8fafc;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 13px;
+        }
+
+        .data-live-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .chart-svg-container {
+            width: 100%;
+            height: 240px;
+        }
+
+        .chart-path-animated {
+            stroke-dasharray: 1200;
+            stroke-dashoffset: 1200;
+            transition: stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .chart-path-animated.drawn {
+            stroke-dashoffset: 0;
+        }
+
+        /* DOWNLOAD SECTION */
+        #section-download {
+            background: transparent;
+        }
+
+        .download-wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+            align-items: stretch;
+        }
+
+        .download-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px 30px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+
+        .download-card.highlight {
+            border-color: var(--accent);
+            box-shadow: 0 15px 40px -10px var(--accent-glow);
+        }
+
+        .download-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .download-platform {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: 6px;
+        }
+
+        .download-arch {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .download-os {
+            font-size: 13px;
+            color: var(--text-3);
+            margin-bottom: 28px;
+        }
+
+        .download-btn {
+            margin-top: auto;
+            width: 100%;
+            height: 46px;
+            border-radius: 23px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.2s, transform 0.15s;
+            box-shadow: 0 2px 10px var(--accent-glow);
+        }
+
+        .download-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .download-version {
+            font-size: 11px;
+            color: var(--text-3);
+            text-align: center;
+            margin-top: 10px;
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        /* SECURITY & PRIVACY SECTION */
+        #section-security {
+            background: transparent;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .security-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 32px;
+            backdrop-filter: blur(20px);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .security-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-mid);
+        }
+
+        /* CHANGELOG SECTION */
+        #section-changelog {
+            background: transparent;
+        }
+
+        .changelog-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px 40px;
+            backdrop-filter: blur(20px);
+            max-width: 820px;
+            margin: 40px auto 0;
+            box-shadow: var(--card-shadow);
+        }
+
+        .cl-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cl-ver {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-1);
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .cl-date {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+
+        .cl-content {
+            font-size: 14.5px;
+            line-height: 1.8;
+            color: var(--text-2);
+            white-space: pre-line;
+        }
+
+        /* SPONSORS SECTION */
+        #section-sponsor {
+            text-align: center;
+            background: transparent;
+        }
+
+        .sponsor-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            height: 52px;
+            padding: 0 36px;
+            border-radius: 26px;
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(244, 63, 94, 0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+        }
+
+        .sponsor-cta-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(244, 63, 94, 0.45);
+        }
+
+        #section-sponsors {
+            padding-top: 20px;
+            background: transparent;
+        }
+
+        .sponsors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 14px;
+            margin-top: 40px;
+        }
+
+        .sponsor-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            backdrop-filter: blur(16px);
+            transition: transform 0.15s;
+        }
+
+        .sponsor-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--border-mid);
+        }
+
+        .sponsor-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 0 auto 10px;
+        }
+
+        .sponsor-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-1);
+            margin-bottom: 4px;
+        }
+
+        .sponsor-amount {
+            font-size: 12px;
+            font-weight: 700;
+            color: #f43f5e;
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .sponsor-date {
+            font-size: 10.5px;
+            color: var(--text-3);
+            margin-top: 2px;
+        }
+
+        /* SYSTEM REQUIREMENTS */
+        #section-sysreq {
+            background: transparent;
+        }
+
+        .sysreq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .sysreq-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 32px;
+            backdrop-filter: blur(20px);
+        }
+
+        .sysreq-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sysreq-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-2);
+        }
+
+        .sysreq-list li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        /* GITHUB SECTION */
+        #section-github {
+            background: transparent;
+            padding-bottom: 140px;
+        }
+
+        .github-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px;
+            text-align: center;
+            max-width: 820px;
+            margin: 0 auto;
+            backdrop-filter: blur(24px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .github-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 48px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-3);
+            background: var(--bg);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+            color: var(--text-2);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-1);
+        }
+
+        /* MODAL */
+        #sponsor-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 24px;
+        }
+
+        #sponsor-modal.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-mid);
+            border-radius: 24px;
+            max-width: 520px;
+            width: 100%;
+            padding: 36px;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close-x {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(125, 125, 125, 0.1);
+            border: none;
+            color: var(--text-2);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-qr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 28px 0;
+        }
+
+        .qr-card {
+            background: rgba(125, 125, 125, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .qr-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .qr-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-2);
+        }
+
+        
+        /* MODAL REASSURANCE & HORIZONTAL SPONSORS (FIX 2 & 4) */
+        .modal-box {
+            max-width: 600px;
+            width: 100%;
+            padding: 38px 36px;
+        }
+
+        .qr-card {
+            background: #ffffff !important;
+            border: 1px solid var(--border-mid);
+            border-radius: 16px;
+            padding: 16px 16px 12px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .qr-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .qr-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1d1d1f !important;
+        }
+
+        .arch-right-col {
+            margin-top: 14px;
+        }
+
+        @media (max-width: 1024px) {
+            .arch-right-col {
+                margin-top: 0;
+            }
+        }
+
+        .modal-notice {
+            background: var(--accent-bg);
+            border: 1px solid var(--border-accent);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin: 14px 0 16px;
+            text-align: left;
+        }
+
+        .modal-notice-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            letter-spacing: 0.2px;
+        }
+
+        .modal-notice-text {
+            font-size: 12px;
+            line-height: 1.55;
+            color: var(--text-2);
+        }
+
+        .modal-sponsors-section {
+            margin: 14px 0 10px;
+            border-top: 1px solid var(--border);
+            padding-top: 14px;
+            text-align: left;
+        }
+
+        .modal-sponsors-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-2);
+            font-family: "JetBrains Mono", monospace;
+            margin-bottom: 10px;
+        }
+
+        .modal-sponsors-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: hidden;
+            padding: 4px 0 8px;
+            white-space: nowrap;
+            user-select: none;
+            scrollbar-width: none;
+            mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+        }
+
+        .modal-sponsors-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modal-sponsor-chip {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 12px;
+            background: rgba(125, 125, 125, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            font-size: 12px;
+        }
+
+        .modal-sponsor-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-sponsor-name {
+            font-weight: 600;
+            color: var(--text-1);
+        }
+
+        .modal-sponsor-amount {
+            color: #f43f5e;
+            font-weight: 700;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11px;
+        }
+
+        /* REVEAL ANIMATIONS */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        
+        /* ARCHITECTURE & SECURITY SECTION */
+        #section-architecture {
+            background: transparent;
+            position: relative;
+            z-index: 2;
+        }
+
+        .arch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 56px;
+            align-items: start;
+        }
+
+        .trust-headline {
+            font-size: clamp(30px, 3.8vw, 44px);
+            font-weight: 800;
+            letter-spacing: -1.6px;
+            line-height: 1.15;
+            color: var(--text-1);
+            margin-bottom: 16px;
+        }
+
+        .trust-sub {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-2);
+            margin-bottom: 32px;
+        }
+
+        .pillar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pillar-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s;
+        }
+
+        .pillar-item:hover {
+            transform: translateX(4px);
+            border-color: var(--border-mid);
+        }
+
+        .pillar-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--accent-bg);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .pillar-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pillar-desc {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.55;
+        }
+
+        /* What TD Studio doesn't do (Boundary Box) */
+        .boundary-box {
+            background: rgba(125, 125, 125, 0.04);
+            border: 1px solid var(--border-mid);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 32px;
+            backdrop-filter: blur(20px);
+        }
+
+        .boundary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .boundary-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-3);
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .boundary-badge {
+            font-size: 10.5px;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .boundary-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13.5px;
+            color: var(--text-2);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .boundary-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .boundary-cross {
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* Architecture Diagram (Right Column) */
+        .arch-diagram-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-mid);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--window-shadow);
+            backdrop-filter: blur(24px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .device-boundary {
+            border: 1px dashed var(--border-accent);
+            border-radius: 14px;
+            padding: 20px;
+            background: rgba(125, 125, 125, 0.02);
+            position: relative;
+        }
+
+        .boundary-tag {
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg-card);
+            padding: 0 10px;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-family: "JetBrains Mono", monospace;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .client-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+        }
+
+        .client-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .client-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arch-chips-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .arch-chip {
+            background: rgba(125, 125, 125, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11px;
+            color: var(--text-2);
+        }
+
+        .arch-chip strong {
+            display: block;
+            font-size: 11.5px;
+            color: var(--text-1);
+            margin-bottom: 2px;
+        }
+
+        .arch-chip.chip-security {
+            grid-column: span 2;
+            background: var(--accent-bg);
+            border-color: var(--border-accent);
+            color: var(--accent);
+        }
+
+        /* Direct Connection Conduit Line */
+        .connection-pipe {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 18px 0;
+            position: relative;
+        }
+
+        .pipe-line {
+            width: 2px;
+            height: 48px;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--cyan) 100%);
+            position: relative;
+        }
+
+        .pipe-pulse {
+            position: absolute;
+            top: 0;
+            left: -3px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 10px var(--cyan);
+            animation: pulseFlow 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes pulseFlow {
+            0% { top: 0%; opacity: 0; transform: scale(0.6); }
+            20% { opacity: 1; transform: scale(1.2); }
+            80% { opacity: 1; transform: scale(1.2); }
+            100% { top: 100%; opacity: 0; transform: scale(0.6); }
+        }
+
+        .pipe-label {
+            margin: 6px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 12px;
+            border-radius: 12px;
+            background: var(--accent-bg);
+            border: 1px solid var(--border-accent);
+            font-size: 11px;
+            font-family: "JetBrains Mono", monospace;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Database Target Box */
+        .db-target-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+        }
+
+        .db-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-endpoints {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11.5px;
+            color: var(--text-3);
+            line-height: 1.6;
+        }
+
+        /* RESPONSIVE BREAKPOINTS */
+        @media (max-width: 1024px) {
+            .demo-stage {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            .arch-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .demo-narrative-box {
+                height: 180px;
+                text-align: center;
+            }
+            .demo-step-panel {
+                align-items: center;
+            }
+            .bento-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            .col-8, .col-7, .col-6, .col-5, .col-4, .col-12 {
+                grid-column: span 6;
+            }
+            .stats-stage {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .nav-actions .nav-download-btn {
+                display: none;
+            }
+            .nav-hamburger {
+                display: flex;
+            }
+            #hero {
+                padding: 100px 20px 60px;
+            }
+            .hero-window {
+                transform: none !important;
+            }
+            .win-layout {
+                height: 380px;
+            }
+            .win-sidebar {
+                display: none;
+            }
+            .download-grid, .security-grid, .sysreq-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-stage {
+                grid-template-columns: 1fr;
+            }
+            .github-actions {
+                flex-direction: column;
+            }
+            .modal-qr-grid {
+                grid-template-columns: 1fr;
+            }
+            .section-wrap {
+                padding: 80px 20px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <h1>TD Studio Updates</h1>
+    <!-- CANVAS DATA PARTICLE SYSTEM -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- ATMOSPHERIC GLOW LAYER -->
+    <div id="bg-atmosphere" aria-hidden="true">
+        <div class="atmo-blob atmo-1" id="atmo-1"></div>
+        <div class="atmo-blob atmo-2" id="atmo-2"></div>
+        <div class="atmo-blob atmo-3" id="atmo-3"></div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav id="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <img src="./assets/image/app-icon.png" alt="TD Studio" class="nav-logo-img" />
+                <span>TD Studio</span>
+            </a>
+            <div class="nav-links">
+                <a href="#section-demo" class="nav-link">交互演示</a>
+                <a href="#section-features" class="nav-link">核心特性</a>
+                <a href="#section-architecture" class="nav-link">架构与安全</a>
+                <a href="#section-data" class="nav-link">时序流动</a>
+                <a href="#section-download" class="nav-link">立即下载</a>
+                <a href="#section-changelog" class="nav-link">更新日志</a>
+                <a href="#section-sponsor" class="nav-link">赞助支持</a>
+                <a href="https://github.com/huangdungui/TD-Studio-Release" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-theme-btn" id="theme-toggle" title="切换主题" aria-label="切换主题">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="theme-icon-sun">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="theme-icon-moon" style="display:none;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+                <a href="#section-download" class="nav-download-btn">免费下载</a>
+                <button class="nav-hamburger" id="nav-hamburger" aria-label="打开菜单">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="nav-links-mobile" id="nav-links-mobile">
+        <a href="#section-demo" class="nav-link">交互演示</a>
+        <a href="#section-features" class="nav-link">核心特性</a>
+        <a href="#section-architecture" class="nav-link">架构与安全</a>
+        <a href="#section-data" class="nav-link">时序流动</a>
+        <a href="#section-download" class="nav-link">立即下载</a>
+        <a href="#section-changelog" class="nav-link">更新日志</a>
+        <a href="#section-sponsor" class="nav-link">赞助支持</a>
+        <a href="https://github.com/huangdungui/TD-Studio-Release" target="_blank" rel="noopener" class="nav-link">GitHub Release</a>
+    </div>
+
+    <!-- HERO SECTION (SCENE 1) -->
+    <section id="hero">
+        <div class="hero-content" id="hero-text-content">
+            <div class="hero-eyebrow">
+                <div class="hero-eyebrow-dot"></div>
+                <span>TDengine 3.x 原生深度支持 &middot; <span id="hero-version-num">v0.1.1</span> 已发布</span>
+            </div>
+            <h1 class="hero-title">TD Studio</h1>
+            <p class="hero-subtitle">为 TDengine 而生的现代数据库客户端。<br>以原生架构释放时序数据极速查询与分析潜能。</p>
+            <div class="hero-actions">
+                <a href="#section-download" class="btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 1v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    立即免费下载
+                </a>
+                <a href="https://github.com/huangdungui/TD-Studio-Release" target="_blank" rel="noopener" class="btn-ghost">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    查看 GitHub
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-window-stage">
+            <div class="hero-window-aura"></div>
+            <div class="hero-window" id="hero-win">
+                <div class="win-titlebar">
+                    <div class="win-dot r"></div>
+                    <div class="win-dot y"></div>
+                    <div class="win-dot g"></div>
+                    <div class="win-title-text">TD Studio &mdash; power_db &middot; cluster-prod-01</div>
+                </div>
+                <div class="win-layout">
+                    <div class="win-sidebar">
+                        <div class="win-sidebar-section">
+                            <div class="win-sidebar-label">Connections</div>
+                            <div class="win-db-item active">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <ellipse cx="12" cy="5" rx="9" ry="3" />
+                                    <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+                                    <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3" />
+                                </svg>power_db
+                            </div>
+                            <div class="win-db-item">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <ellipse cx="12" cy="5" rx="9" ry="3" />
+                                    <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+                                    <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3" />
+                                </svg>energy_log
+                            </div>
+                            <div class="win-db-item">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <ellipse cx="12" cy="5" rx="9" ry="3" />
+                                    <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+                                    <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3" />
+                                </svg>iot_metrics
+                            </div>
+                        </div>
+                        <div class="win-sidebar-section">
+                            <div class="win-sidebar-label">Super Tables</div>
+                            <div class="win-db-item">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                                    <path d="M3 9h18M3 15h18M9 3v18" />
+                                </svg>power_meter
+                            </div>
+                            <div class="win-db-item">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                                    <path d="M3 9h18M3 15h18M9 3v18" />
+                                </svg>voltage_log
+                            </div>
+                        </div>
+                    </div>
+                    <div class="win-main">
+                        <div class="win-tabs">
+                            <div class="win-tab active">Query 1</div>
+                            <div class="win-tab">Telemetry Live</div>
+                            <div class="win-tab">Schema Info</div>
+                        </div>
+                        <div class="win-editor">
+                            <div><span class="comment">-- TDengine 3.x Time-Series Aggregation Query</span></div>
+                            <div><span class="kw">SELECT</span> ts, <span class="fn">last</span>(voltage), <span class="fn">avg</span>(current), <span class="fn">max</span>(power)</div>
+                            <div><span class="kw">FROM</span> <span class="tbl">power_meter</span></div>
+                            <div><span class="kw">WHERE</span> ts &gt;= <span class="num">NOW</span>() - <span class="num">1h</span></div>
+                            <div><span class="kw">INTERVAL</span>(<span class="num">1m</span>) <span class="kw">SLIDING</span>(<span class="num">30s</span>) <span class="kw">FILL</span>(PREV)</div>
+                            <div><span class="kw">LIMIT</span> <span class="num">100</span><span class="win-cursor"></span></div>
+                        </div>
+                        <div class="win-toolbar">
+                            <div class="win-run-btn">&#9654; 运行查询 (Ctrl+Enter)</div>
+                            <div class="win-toolbar-label">power_meter &middot; TDengine 3.x Native</div>
+                        </div>
+                        <div class="win-results">
+                            <table class="win-table">
+                                <thead>
+                                    <tr>
+                                        <th>timestamp</th>
+                                        <th>last(voltage)</th>
+                                        <th>avg(current)</th>
+                                        <th>max(power)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="td-ts">2026-09-05 17:30:00.000</td>
+                                        <td class="td-val">220.45 V</td>
+                                        <td class="td-val">5.12 A</td>
+                                        <td class="td-val">1128.7 W</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td-ts">2026-09-05 17:31:00.000</td>
+                                        <td class="td-val">221.10 V</td>
+                                        <td class="td-val">5.08 A</td>
+                                        <td class="td-val">1122.9 W</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td-ts">2026-09-05 17:32:00.000</td>
+                                        <td class="td-val">219.80 V</td>
+                                        <td class="td-val">5.19 A</td>
+                                        <td class="td-val">1140.7 W</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td-ts">2026-09-05 17:33:00.000</td>
+                                        <td class="td-val">220.15 V</td>
+                                        <td class="td-val">5.14 A</td>
+                                        <td class="td-val">1131.5 W</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="win-statusbar">
+                            <div class="win-status-dot"></div>
+                            <span>已连接 (127.0.0.1:6030)</span>
+                            <span>4 rows &middot; 14 ms</span>
+                            <span>TDengine 3.x Engine</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 400VH STICKY SCROLL DEMO (SCENE 2, 3, 4) -->
+    <section id="section-demo">
+        <div class="demo-sticky">
+            <div class="demo-progress" id="demo-progress"></div>
+            <div class="demo-stage">
+                <!-- Left: Floating Narrative Storytelling -->
+                <div class="demo-narrative-box">
+                    <!-- Step 0: SQL Editor -->
+                    <div class="demo-step-panel" data-step="0">
+                        <div class="demo-step-badge">STAGE 01 / SQL WORKSPACE</div>
+                        <h2 class="demo-step-title">写下你的查询。</h2>
+                        <p class="demo-step-desc">专为 TDengine 打造的时序语法高亮与智能补全。支持超级表、多时间窗口间隔与滑动计算，毫秒级流式响应。</p>
+                        <div class="demo-step-indicators">
+                            <div class="demo-indicator-pill active"></div>
+                            <div class="demo-indicator-pill"></div>
+                            <div class="demo-indicator-pill"></div>
+                            <div class="demo-indicator-pill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Query Execution -->
+                    <div class="demo-step-panel" data-step="1" style="opacity:0; pointer-events:none;">
+                        <div class="demo-step-badge">STAGE 02 / INSTANT INSIGHTS</div>
+                        <h2 class="demo-step-title">毫秒级执行，即刻洞察。</h2>
+                        <p class="demo-step-desc">直接调用底层原生连接通道，突破浏览器内存壁垒。无论是百万级时序点还是复杂跨设备聚合，结果瞬间触手可及。</p>
+                        <div class="demo-step-indicators">
+                            <div class="demo-indicator-pill"></div>
+                            <div class="demo-indicator-pill active"></div>
+                            <div class="demo-indicator-pill"></div>
+                            <div class="demo-indicator-pill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Live Visualization -->
+                    <div class="demo-step-panel" data-step="2" style="opacity:0; pointer-events:none;">
+                        <div class="demo-step-badge">STAGE 03 / DATA STREAM</div>
+                        <h2 class="demo-step-title">让数据开始流动。</h2>
+                        <p class="demo-step-desc">一键将时序查询转换为动态流式图表。多测点趋势对比、电压电流波动分析与异常采样一目了然。</p>
+                        <div class="demo-step-indicators">
+                            <div class="demo-indicator-pill"></div>
+                            <div class="demo-indicator-pill"></div>
+                            <div class="demo-indicator-pill active"></div>
+                            <div class="demo-indicator-pill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Database Topology -->
+                    <div class="demo-step-panel" data-step="3" style="opacity:0; pointer-events:none;">
+                        <div class="demo-step-badge">STAGE 04 / SCHEMA TOPOLOGY</div>
+                        <h2 class="demo-step-title">看见你的数据库架构。</h2>
+                        <p class="demo-step-desc">深入 TDengine 独特的超级表、子表与动态标签体系。清晰呈现数万张物理子表的元数据与物理存储分布。</p>
+                        <div class="demo-step-indicators">
+                            <div class="demo-indicator-pill"></div>
+                            <div class="demo-indicator-pill"></div>
+                            <div class="demo-indicator-pill"></div>
+                            <div class="demo-indicator-pill active"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Product Hero Object -->
+                <div class="demo-window-container">
+                    <div class="demo-visual-card">
+                        <div class="win-titlebar">
+                            <div class="win-dot r"></div>
+                            <div class="win-dot y"></div>
+                            <div class="win-dot g"></div>
+                            <div class="win-title-text" id="demo-win-title">TD Studio &mdash; Workspace</div>
+                        </div>
+
+                        <!-- Visual Panel 0: SQL Code -->
+                        <div class="demo-visual-panel" data-step="0">
+                            <div class="win-editor" style="height:100%; padding:24px; font-size:13.5px; line-height:1.8;">
+                                <div><span class="comment">-- 1. 查询超级表 power_meter 最近 1 小时数据</span></div>
+                                <div><span class="kw">SELECT</span></div>
+                                <div>&nbsp;&nbsp;_wstart <span class="kw">AS</span> window_start,</div>
+                                <div>&nbsp;&nbsp;<span class="fn">count</span>(*),</div>
+                                <div>&nbsp;&nbsp;<span class="fn">first</span>(voltage), <span class="fn">last</span>(voltage),</div>
+                                <div>&nbsp;&nbsp;<span class="fn">avg</span>(current), <span class="fn">stddev</span>(voltage)</div>
+                                <div><span class="kw">FROM</span> <span class="tbl">power_meter</span></div>
+                                <div><span class="kw">WHERE</span> ts &gt;= <span class="num">NOW</span>() - <span class="num">1h</span></div>
+                                <div>&nbsp;&nbsp;<span class="kw">AND</span> location = <span class="num">'factory_east_01'</span></div>
+                                <div><span class="kw">PARTITION BY</span> location</div>
+                                <div><span class="kw">INTERVAL</span>(<span class="num">5m</span>)</div>
+                                <div><span class="kw">ORDER BY</span> window_start <span class="kw">DESC</span>;<span class="win-cursor"></span></div>
+                            </div>
+                        </div>
+
+                        <!-- Visual Panel 1: Fast Table Results -->
+                        <div class="demo-visual-panel" data-step="1" style="opacity:0; pointer-events:none;">
+                            <div class="win-toolbar">
+                                <div class="win-run-btn" style="background:#0ea5e9;">&#10003; 执行完成</div>
+                                <div class="win-toolbar-label" style="color:#10b981; font-weight:600;">18.2 ms &middot; 5,420 行数据 &middot; 0 错误</div>
+                            </div>
+                            <div class="win-results" style="padding:4px 0;">
+                                <table class="win-table">
+                                    <thead>
+                                        <tr>
+                                            <th>window_start</th>
+                                            <th>count</th>
+                                            <th>first(voltage)</th>
+                                            <th>avg(current)</th>
+                                            <th>status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="td-ts">17:30:00.000</td>
+                                            <td class="td-val">300</td>
+                                            <td class="td-val">220.4 V</td>
+                                            <td class="td-val">5.12 A</td>
+                                            <td><span style="color:#10b981; font-size:11px;">● 正常</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="td-ts">17:25:00.000</td>
+                                            <td class="td-val">300</td>
+                                            <td class="td-val">220.8 V</td>
+                                            <td class="td-val">5.15 A</td>
+                                            <td><span style="color:#10b981; font-size:11px;">● 正常</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="td-ts">17:20:00.000</td>
+                                            <td class="td-val">300</td>
+                                            <td class="td-val">221.2 V</td>
+                                            <td class="td-val">5.10 A</td>
+                                            <td><span style="color:#10b981; font-size:11px;">● 正常</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="td-ts">17:15:00.000</td>
+                                            <td class="td-val">300</td>
+                                            <td class="td-val">219.9 V</td>
+                                            <td class="td-val">5.22 A</td>
+                                            <td><span style="color:#10b981; font-size:11px;">● 正常</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="td-ts">17:10:00.000</td>
+                                            <td class="td-val">300</td>
+                                            <td class="td-val">220.1 V</td>
+                                            <td class="td-val">5.18 A</td>
+                                            <td><span style="color:#10b981; font-size:11px;">● 正常</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Visual Panel 2: Live Flow Chart -->
+                        <div class="demo-visual-panel" data-step="2" style="opacity:0; pointer-events:none;">
+                            <div class="demo-chart-box">
+                                <div class="demo-chart-header">
+                                    <div class="demo-chart-tag">STREAM: power_meter.voltage &bull; LIVE</div>
+                                    <div style="font-size:12px; color:#94a3b8; font-family:'JetBrains Mono';">采样率: 100ms</div>
+                                </div>
+                                <div class="demo-chart-metrics">
+                                    220.84 <span>V &middot; 稳态电压输出</span>
+                                </div>
+                                <div style="flex:1; position:relative; min-height:180px;">
+                                    <svg viewBox="0 0 600 200" preserveAspectRatio="none" style="width:100%; height:100%;">
+                                        <defs>
+                                            <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.4"/>
+                                                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.0"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M0,130 Q70,90 140,110 T280,70 T420,120 T560,60 L600,80 L600,200 L0,200 Z" fill="url(#chartGlow)" />
+                                        <path id="demo-chart-path" d="M0,130 Q70,90 140,110 T280,70 T420,120 T560,60 L600,80" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" class="chart-path-animated" />
+                                        <circle cx="560" cy="60" r="5" fill="#22d3ee">
+                                            <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite"/>
+                                        </circle>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visual Panel 3: Schema Topology -->
+                        <div class="demo-visual-panel" data-step="3" style="opacity:0; pointer-events:none;">
+                            <div class="demo-schema-tree">
+                                <div class="tree-node highlight">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+                                    <strong>power_db</strong> &middot; 时序数据库 (Retention: 3650d)
+                                </div>
+                                <div style="padding-left: 20px;">
+                                    <div class="tree-node highlight">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+                                        <strong>power_meter</strong> (Super Table &bull; 12 Columns &bull; 3 Tags)
+                                    </div>
+                                    <div style="padding-left: 24px;">
+                                        <div class="tree-node">&bull; meter_1001 &middot; tag: factory=east, line=A</div>
+                                        <div class="tree-node">&bull; meter_1002 &middot; tag: factory=east, line=B</div>
+                                        <div class="tree-node">&bull; meter_1003 &middot; tag: factory=west, line=A</div>
+                                        <div class="tree-node">&bull; meter_1004 &middot; tag: factory=west, line=C</div>
+                                    </div>
+                                    <div class="tree-node" style="margin-top:8px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+                                        <strong>voltage_log</strong> (Super Table &bull; 8 Columns &bull; 2 Tags)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE FEATURES (DE-CARDIFIED BENTO) -->
+    <section id="section-features">
+        <div class="section-wrap">
+            <div class="section-header reveal">
+                <div class="section-eyebrow">CORE ARCHITECTURE</div>
+                <h2 class="section-title">专为时序数据打造的极致体验</h2>
+                <p class="section-subtitle">告别通用数据库工具的笨重与迟钝，专为 TDengine 3.x 深度定制，兼顾极致性能与直观美感。</p>
+            </div>
+
+            <div class="bento-grid">
+                <!-- Large Card 1 -->
+                <div class="bento-card col-8 reveal">
+                    <div class="bento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M3 9h18M3 15h18M9 3v18"/>
+                        </svg>
+                    </div>
+                    <h3 class="bento-title">超级表与子表全景视图</h3>
+                    <p class="bento-desc">TDengine 最核心的超表与标签设计，在 TD Studio 中得以完全释放。支持百万级物理子表瞬间展开检索，动态按标签过滤聚合，轻松驾驭大规模物联网设备拓扑。</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bento-card col-4 reveal">
+                    <div class="bento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="16 18 22 12 16 6"/>
+                            <polyline points="8 6 2 12 8 18"/>
+                        </svg>
+                    </div>
+                    <h3 class="bento-title">专有时序语法高亮</h3>
+                    <p class="bento-desc">深度适配 TDengine 独有的 INTERVAL、SLIDING、STATE_WINDOW、FILL 等时序分析语法与时间单位。</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bento-card col-4 reveal">
+                    <div class="bento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                    </div>
+                    <h3 class="bento-title">Rust 原生内核，轻盈迅速</h3>
+                    <p class="bento-desc">基于 Tauri 与 Rust 原生轻量架构，冷启动耗时极短，内存占用远低于传统 Electron 客户端。</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bento-card col-4 reveal">
+                    <div class="bento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3 class="bento-title">零远程遥测，纯本地存储</h3>
+                    <p class="bento-desc">连接凭据与查询历史仅加密保存在本地环境。绝不收集、上传任何业务数据与私有数据库连接信息。</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="bento-card col-4 reveal">
+                    <div class="bento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                            <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/>
+                            <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/>
+                        </svg>
+                    </div>
+                    <h3 class="bento-title">多集群一键自由切换</h3>
+                    <p class="bento-desc">集中管理开发、测试与生产多套 TDengine 集群连接，环境隔离清晰，杜绝误操作风险。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS (FLOATING IN DATA SPACE) -->
+    <section id="section-stats">
+        <div class="stats-stage reveal">
+            <div class="stat-item">
+                <div class="stat-num">0ms</div>
+                <div class="stat-label">无感冷启动</div>
+                <div class="stat-sub">原生轻量底层架构</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">100%</div>
+                <div class="stat-label">纯本地安全</div>
+                <div class="stat-sub">零远程追踪与数据上传</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">3.x</div>
+                <div class="stat-label">深度原生契合</div>
+                <div class="stat-sub">专为 TDengine 3.x 协议打造</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARCHITECTURE & PRIVACY SECTION -->
+    <section id="section-architecture">
+        <div class="section-wrap">
+            <div class="section-header reveal">
+                <div class="section-eyebrow">ARCHITECTURE &amp; PRIVACY FIRST</div>
+                <h2 class="section-title">Your database. Your data. Your machine.</h2>
+                <p class="section-subtitle">你的数据库，你的数据，你的设备。TD Studio 坚持 Local-First 本地优先设计哲学，构建纯粹透明的直连通道。</p>
+            </div>
+
+            <div class="arch-grid">
+                <!-- Left: Trust Principles & What TD Studio doesn't do -->
+                <div class="reveal">
+                    <h3 class="trust-headline">纯本地原生运行，<br>拒绝任何云端数据中继</h3>
+                    <p class="trust-sub">作为一款专业桌面客户端，TD Studio 的连接通道、SQL 执行与数据解析全部由您电脑上的本地 Rust 进程直接发起。数据在本地设备与目标数据库之间点对点流通，绝不借道第三方服务器。</p>
+
+                    <div class="pillar-list">
+                        <!-- Pillar 1: Local First Engine -->
+                        <div class="pillar-item">
+                            <div class="pillar-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="pillar-title">Local-First 原生运行时</div>
+                                <div class="pillar-desc">基于 Tauri v2 与 Rust 底层开发，无云端宿主依赖。连接配置加密保存在系统原生钥匙串（macOS Keychain / Windows Credential Manager），本地隔离受控。</div>
+                            </div>
+                        </div>
+
+                        <!-- Pillar 2: Direct Connection -->
+                        <div class="pillar-item">
+                            <div class="pillar-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14"></path>
+                                    <path d="M12 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="pillar-title">点对点直连（No Cloud Proxy）</div>
+                                <div class="pillar-desc">客户端直接调用 TDengine 原生协议与 RESTful 通道（端口 6030/6041），支持内网隔离、跨 VPC 与物理离线专网，无任何中间人云端代理。</div>
+                            </div>
+                        </div>
+
+                        <!-- Pillar 3: No Account Required -->
+                        <div class="pillar-item">
+                            <div class="pillar-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                    <line x1="18" y1="8" x2="23" y2="13"></line>
+                                    <line x1="23" y1="8" x2="18" y2="13"></line>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="pillar-title">无需注册 &middot; 无需登录</div>
+                                <div class="pillar-desc">不强制绑定任何邮箱或云端账号。下载完成即可直接使用，告别繁琐的账号注册与云端登录流程，尊重开发者的纯粹体验。</div>
+                            </div>
+                        </div>
+
+                        <!-- Pillar 4: No Telemetry -->
+                        <div class="pillar-item">
+                            <div class="pillar-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="pillar-title">零埋点追踪 &middot; 零数据上传</div>
+                                <div class="pillar-desc">代码中绝无任何埋点分析 SDK 或行为遥测探针。您的数据库地址、用户凭据、SQL 查询语句及结果集均 100% 留在本机，绝不上报云端。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- What TD Studio doesn't do -->
+                    <div class="boundary-box">
+                        <div class="boundary-header">
+                            <span class="boundary-label">WHAT TD STUDIO DOESN'T DO / 边界声明</span>
+                            <span class="boundary-badge">STRICT BOUNDARY</span>
+                        </div>
+                        <div class="boundary-item">
+                            <span class="boundary-cross">&#10005;</span>
+                            <span><strong>No Account Required</strong> &mdash; 绝不强制要求注册账号或验证身份信息</span>
+                        </div>
+                        <div class="boundary-item">
+                            <span class="boundary-cross">&#10005;</span>
+                            <span><strong>No User Tracking / Telemetry</strong> &mdash; 绝不追踪用户行为，不主动上传使用日志</span>
+                        </div>
+                        <div class="boundary-item">
+                            <span class="boundary-cross">&#10005;</span>
+                            <span><strong>No Cloud Database Proxy</strong> &mdash; 绝不设置云端中继，数据绝不经过外部托管节点</span>
+                        </div>
+                        <div class="boundary-item">
+                            <span class="boundary-cross">&#10005;</span>
+                            <span><strong>No Mandatory Cloud Service</strong> &mdash; 纯粹独立离线运行，可在无外网或严格内网环境中安心运行</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: High-Tech Architecture Topology Diagram -->
+                <div class="reveal arch-right-col">
+                    <div class="arch-diagram-card">
+                        <div style="font-size:12px; font-weight:700; color:var(--text-3); letter-spacing:1px; text-transform:uppercase; font-family:'JetBrains Mono'; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>TOPOLOGY / DATA FLOW</span>
+                            <span style="color:var(--accent); font-size:11px;">● ZERO CLOUD PROXY</span>
+                        </div>
+
+                        <!-- Local Environment Boundary -->
+                        <div class="device-boundary">
+                            <div class="boundary-tag">Local Device Boundary (用户本地电脑)</div>
+                            <div class="client-box">
+                                <div class="client-header">
+                                    <div class="client-title">
+                                        <div style="width:10px; height:10px; border-radius:50%; background:var(--accent);"></div>
+                                        <span>TD Studio Desktop Client</span>
+                                    </div>
+                                    <span style="font-size:11px; color:#10b981; font-family:'JetBrains Mono';">v0.1.x &middot; Native</span>
+                                </div>
+                                <div class="arch-chips-grid">
+                                    <div class="arch-chip">
+                                        <strong>Frontend UI</strong>
+                                        Vue 3 &middot; TS &middot; Monaco
+                                    </div>
+                                    <div class="arch-chip">
+                                        <strong>Native Runtime</strong>
+                                        Tauri v2 &middot; Rust Core
+                                    </div>
+                                    <div class="arch-chip chip-security">
+                                        <strong>OS Native Keyring (安全凭据管理)</strong>
+                                        macOS Keychain / Windows Credential Manager (本地加密)
+                                    </div>
+                                </div>
+                                <div style="font-size:11px; color:var(--text-3); font-family:'JetBrains Mono';">
+                                    Local Process I/O &bull; Direct OS Memory Sandbox
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Direct Connection Pipe -->
+                        <div class="connection-pipe">
+                            <div class="pipe-line">
+                                <div class="pipe-pulse"></div>
+                            </div>
+                            <div class="pipe-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="7 13 12 18 17 13"></polyline>
+                                    <polyline points="7 6 12 11 17 6"></polyline>
+                                </svg>
+                                DIRECT SOCKET / REST (PORT 6041 / 6030)
+                            </div>
+                            <div class="pipe-line">
+                                <div class="pipe-pulse" style="animation-delay: 1s;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Target TDengine Database -->
+                        <div class="db-target-box">
+                            <div class="db-header">
+                                <div class="db-name">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                                        <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"></path>
+                                        <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"></path>
+                                    </svg>
+                                    Your TDengine Instance
+                                </div>
+                                <span style="font-size:11px; color:#10b981; font-weight:600; font-family:'JetBrains Mono';">DIRECT ENDPOINT</span>
+                            </div>
+                            <div class="db-endpoints">
+                                &bull; Localhost: 127.0.0.1:6041<br>
+                                &bull; Private Intranet: 192.168.x.x / 10.x.x.x<br>
+                                &bull; Enterprise VPC / WireGuard / Direct TLS
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Matching Assurance Box for Perfect Symmetry -->
+                    <div class="boundary-box">
+                        <div class="boundary-header">
+                            <span class="boundary-label">AIR-GAP &amp; SECURITY ASSURANCE / 安全运行保证</span>
+                            <span class="boundary-badge" style="color:#0ea5e9; background:rgba(14,165,233,0.1);">100% AIR-GAPPED</span>
+                        </div>
+                        <div class="boundary-item">
+                            <span style="color:#10b981; font-weight:700; font-size:13px; margin-top:1px;">&#10003;</span>
+                            <span><strong>Air-Gapped Network Ready</strong> &mdash; 严苛支持完全断网与涉密内网机房环境运行</span>
+                        </div>
+                        <div class="boundary-item">
+                            <span style="color:#10b981; font-weight:700; font-size:13px; margin-top:1px;">&#10003;</span>
+                            <span><strong>Native OS Keyring Security</strong> &mdash; 密钥由系统底层原生管理，不发生明文离机传输</span>
+                        </div>
+                        <div class="boundary-item">
+                            <span style="color:#10b981; font-weight:700; font-size:13px; margin-top:1px;">&#10003;</span>
+                            <span><strong>Zero External Runtime Dependency</strong> &mdash; 单一二进制轻量分发，无任何额外环境依赖</span>
+                        </div>
+                        <div class="boundary-item">
+                            <span style="color:#10b981; font-weight:700; font-size:13px; margin-top:1px;">&#10003;</span>
+                            <span><strong>Direct Peer-to-Peer Protocol</strong> &mdash; 原生 TCP/REST 端口直连，物理层面杜绝中间人劫持</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIVE DATA SCENE (IMMERSIVE STREAM) -->
+    <section id="section-data">
+        <div class="section-wrap">
+            <div class="section-header reveal">
+                <div class="section-eyebrow">HIGH PERFORMANCE ENGINE</div>
+                <h2 class="section-title">数据流动，洞察尽现</h2>
+                <p class="section-subtitle">每秒数十万条工业级时序数据流的高速渲染与流畅缩放展示。</p>
+            </div>
+
+            <div class="data-visual-wrapper reveal">
+                <div class="data-stream-header">
+                    <div class="data-live-badge">
+                        <span style="width:8px; height:8px; border-radius:50%; background:#10b981; display:inline-block; box-shadow:0 0 8px #10b981;"></span>
+                        LIVE METRIC STREAM &middot; 500,000 pts/sec
+                    </div>
+                    <div>CLUSTER: tdengine-cluster-sh-01 &bull; PING: 1.2ms</div>
+                </div>
+                <div class="chart-svg-container">
+                    <svg viewBox="0 0 1000 240" preserveAspectRatio="none" style="width:100%; height:100%;">
+                        <defs>
+                            <linearGradient id="mainGlow" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#2997ff" stop-opacity="0.35"/>
+                                <stop offset="100%" stop-color="#2997ff" stop-opacity="0.0"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,160 C120,80 200,200 340,110 C460,30 560,180 700,90 C820,20 900,140 1000,70 L1000,240 L0,240 Z" fill="url(#mainGlow)"/>
+                        <path d="M0,160 C120,80 200,200 340,110 C460,30 560,180 700,90 C820,20 900,140 1000,70" fill="none" stroke="#2997ff" stroke-width="3" stroke-linecap="round" class="chart-path-animated"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DOWNLOAD SECTION -->
+    <section id="section-download">
+        <div class="section-wrap download-wrap">
+            <div class="section-header reveal">
+                <div class="section-eyebrow">DOWNLOAD TD STUDIO</div>
+                <h2 class="section-title">选择适合你的操作系统</h2>
+                <p class="section-subtitle">支持主流平台，下载即用。完全免费，欢迎体验。</p>
+            </div>
+
+            <div id="download-cards-container">
+                <!-- Populated dynamically by buildDownloadCards() -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CHANGELOG -->
+    <section id="section-changelog">
+        <div class="section-wrap">
+            <div class="section-header reveal">
+                <div class="section-eyebrow">WHAT'S NEW</div>
+                <h2 class="section-title">更新日志</h2>
+                <p class="section-subtitle">TD Studio 持续保持迭代优化，只为带来更丝滑稳定的体验。</p>
+            </div>
+
+            <div class="changelog-box reveal">
+                <div class="cl-header">
+                    <div class="cl-ver" id="cl-version">v0.1.1</div>
+                    <div class="cl-date" id="cl-date">发布时间获取中...</div>
+                </div>
+                <div class="cl-content" id="cl-notes">加载最新版本日志中...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SPONSOR -->
+    <section id="section-sponsor">
+        <div class="section-wrap" style="padding-bottom:40px;">
+            <div class="section-header reveal">
+                <div class="section-eyebrow">SUPPORT THE PROJECT</div>
+                <h2 class="section-title">支持 TD Studio 的持续开发</h2>
+                <p class="section-subtitle">TD Studio 是一个永久免费且开源的独立项目。如果您觉得它提升了您的工作效率，欢迎赞助一杯咖啡，支持项目的长期迭代！</p>
+                <div style="margin-top:32px;">
+                    <button class="sponsor-cta-btn" id="open-sponsor-modal">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        立即赞助支持
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SYSTEM REQUIREMENTS -->
+    <section id="section-sysreq">
+        <div class="section-wrap">
+            <div class="section-header reveal">
+                <div class="section-eyebrow">SPECIFICATIONS</div>
+                <h2 class="section-title">系统与环境要求</h2>
+                <p class="section-subtitle">低资源消耗，随处运行。</p>
+            </div>
+
+            <div class="sysreq-grid">
+                <div class="sysreq-card reveal">
+                    <div class="sysreq-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.96.04-2.16.65-2.84 1.44-.61.7-.13 1.77.16 2.82 1.08.09 2.05-.64 2.67-1.39z"/>
+                        </svg>
+                        macOS 操作系统
+                    </div>
+                    <ul class="sysreq-list">
+                        <li>macOS 11.0 (Big Sur) 及更高版本</li>
+                        <li>原生支持 Apple Silicon (M1/M2/M3/M4 系列芯片)</li>
+                        <li>支持 Intel x86_64 处理器</li>
+                        <li>内存建议：最低 512MB 可用内存</li>
+                    </ul>
+                </div>
+
+                <div class="sysreq-card reveal">
+                    <div class="sysreq-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+                        </svg>
+                        Windows 操作系统
+                    </div>
+                    <ul class="sysreq-list">
+                        <li>Windows 10 / Windows 11 (64 位)</li>
+                        <li>支持主流 x64 架构处理器</li>
+                        <li>内置 WebView2 运行时支持</li>
+                        <li>提供便携解压版与免安装运行体验</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GITHUB SECTION -->
+    <section id="section-github">
+        <div class="section-wrap" style="padding-top:40px;">
+            <div class="github-card reveal">
+                <div style="width:56px; height:56px; border-radius:50%; background:var(--accent-bg); color:var(--accent); display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                </div>
+                <h2 style="font-size:28px; font-weight:800; color:var(--text-1); margin-bottom:12px;">免费发布于 GitHub Release，欢迎 Star</h2>
+                <p style="font-size:16px; color:var(--text-2); max-width:560px; margin:0 auto;">TD Studio 发行版制品与更新版本均公开托管于 GitHub Release。欢迎 Star 关注最新动态，或提交 Issue 提出宝贵意见！</p>
+                <div class="github-actions">
+                    <a href="https://github.com/huangdungui/TD-Studio-Release" target="_blank" rel="noopener" class="btn-primary">
+                        访问 Release 制品库
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-links">
+            <a href="#hero">回到顶部</a>
+            <a href="#section-demo">交互演示</a>
+            <a href="#section-download">立即下载</a>
+            <a href="https://github.com/huangdungui/TD-Studio-Release" target="_blank" rel="noopener">GitHub</a>
+            <a href="#section-sponsor">赞助鸣谢</a>
+        </div>
+        <div>&copy; 2026 TD Studio. 为 TDengine 而生. 遵循开源许可协议.</div>
+    </footer>
+
+    <!-- SPONSOR MODAL -->
+    <div id="sponsor-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-box">
+            <button class="modal-close-x" id="modal-close-x" aria-label="关闭">&times;</button>
+            <h3 id="modal-title" style="font-size:22px; font-weight:800; color:var(--text-1); margin-bottom:6px;">感谢支持 TD Studio</h3>
+            <p style="font-size:13.5px; color:var(--text-2);">您的认可与鼓励是独立开发者持续维护与迭代的最大动力！</p>
+
+            <!-- Reassurance Notice Box (Fix 2) -->
+            <div class="modal-notice">
+                <div class="modal-notice-badge">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                    自愿捐赠 &middot; 软件永久免费 &middot; 绝不强制
+                </div>
+                <div class="modal-notice-text">
+                    TD Studio 是一款面向社区完全免费开放的专业工具。所有核心功能均无限制，绝无付费解锁限制。赞助完全自愿，无论赞助与否，您均可永久免费使用全部功能。
+                </div>
+            </div>
+
+            <!-- Payment QR Codes -->
+            <div class="modal-qr-grid">
+                <div class="qr-card">
+                    <img src="./assets/qr/wechat-qr.png" alt="微信赞助二维码" />
+                    <div class="qr-label">微信支付</div>
+                </div>
+                <div class="qr-card">
+                    <img src="./assets/qr/alipay-qr.png" alt="支付宝赞助二维码" />
+                    <div class="qr-label">支付宝</div>
+                </div>
+            </div>
+
+            <!-- Horizontally Scrollable Donor Strip (Fix 4) -->
+            <div class="modal-sponsors-section">
+                <div class="modal-sponsors-title">
+                    <span>鸣谢往期赞助伙伴</span>
+                    <span style="font-size:11px; font-weight:400; color:var(--text-3);">横向滑动查看 &rarr;</span>
+                </div>
+                <div class="modal-sponsors-scroll" id="modal-sponsors-scroll">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <button style="width:100%; height:44px; border-radius:22px; background:var(--accent); color:#fff; font-weight:600; font-size:14px; border:none; cursor:pointer; margin-top:12px;" id="modal-close-btn">
+                完成支持
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        (function () {
+            'use strict';
+
+            /* ==========================================================
+               1. THEME MANAGEMENT
+               ========================================================== */
+            function getTheme() {
+                return localStorage.getItem('td-studio-theme') ||
+                    (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            }
+
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('td-studio-theme', theme);
+                var sun = document.getElementById('theme-icon-sun');
+                var moon = document.getElementById('theme-icon-moon');
+                if (sun && moon) {
+                    sun.style.display = theme === 'dark' ? 'block' : 'none';
+                    moon.style.display = theme === 'dark' ? 'none' : 'block';
+                }
+                if (window.particleSystem) {
+                    window.particleSystem.onThemeChange(theme);
+                }
+            }
+
+            function initTheme() {
+                var theme = getTheme();
+                applyTheme(theme);
+                var btn = document.getElementById('theme-toggle');
+                if (btn) {
+                    btn.addEventListener('click', function () {
+                        var cur = document.documentElement.getAttribute('data-theme');
+                        applyTheme(cur === 'dark' ? 'light' : 'dark');
+                    });
+                }
+            }
+
+            /* ==========================================================
+               2. CANVAS DATA-SPACE PARTICLE SYSTEM
+               ========================================================== */
+            function ParticleSystem(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.width = 0;
+                this.height = 0;
+                this.dpr = 1;
+                this.running = false;
+                this.theme = getTheme();
+                this.state = 'HERO'; // HERO, SQL, RESULTS, DATA_FLOW, TOPOLOGY, DISPERSE, MINIMAL
+                this.speedMultiplier = 1;
+                this.connectionDistance = 115;
+                this.flowBiasX = 0;
+                this.convergeTarget = null;
+                this.mouse = { x: -9999, y: -9999, active: false };
+
+                this.init();
+            }
+
+            ParticleSystem.prototype.init = function () {
+                var self = this;
+                this.resize();
+
+                // Mouse interaction for desktop
+                if (window.innerWidth >= 768) {
+                    window.addEventListener('mousemove', function (e) {
+                        self.mouse.x = e.clientX;
+                        self.mouse.y = e.clientY;
+                        self.mouse.active = true;
+                    }, { passive: true });
+
+                    window.addEventListener('mouseleave', function () {
+                        self.mouse.active = false;
+                    }, { passive: true });
+                }
+
+                // Debounced resize
+                var resizeTimer;
+                window.addEventListener('resize', function () {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function () {
+                        self.resize();
+                    }, 150);
+                }, { passive: true });
+
+                // Visibility API optimization
+                document.addEventListener('visibilitychange', function () {
+                    if (document.hidden) {
+                        self.stop();
+                    } else {
+                        self.start();
+                    }
+                });
+
+                this.start();
+            };
+
+            ParticleSystem.prototype.resize = function () {
+                this.dpr = window.devicePixelRatio || 1;
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                this.canvas.width = this.width * this.dpr;
+                this.canvas.height = this.height * this.dpr;
+                this.ctx.scale(this.dpr, this.dpr);
+
+                var targetCount;
+                if (this.width < 768) {
+                    targetCount = 45; // Mobile: 45
+                } else if (this.width < 1200) {
+                    targetCount = 85; // Tablet: 85
+                } else {
+                    targetCount = 135; // Desktop: 135
+                }
+
+                this.createParticles(targetCount);
+            };
+
+            ParticleSystem.prototype.createParticles = function (count) {
+                this.particles = [];
+                for (var i = 0; i < count; i++) {
+                    var r = 1.0 + Math.random() * 1.4;
+                    var baseAlpha = 0.18 + Math.random() * 0.45;
+                    var type = Math.floor(Math.random() * 4); // 0: Brand Blue, 1: Cyan, 2: Purple, 3: Neutral
+                    this.particles.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        vx: (Math.random() - 0.5) * 0.38,
+                        vy: (Math.random() - 0.5) * 0.38,
+                        baseVx: (Math.random() - 0.5) * 0.38,
+                        baseVy: (Math.random() - 0.5) * 0.38,
+                        r: r,
+                        baseAlpha: baseAlpha,
+                        alpha: baseAlpha,
+                        type: type
+                    });
+                }
+            };
+
+            ParticleSystem.prototype.onThemeChange = function (theme) {
+                this.theme = theme;
+            };
+
+            ParticleSystem.prototype.setState = function (state) {
+                if (this.state === state) return;
+                this.state = state;
+
+                if (state === 'HERO') {
+                    this.speedMultiplier = 1;
+                    this.connectionDistance = 115;
+                    this.flowBiasX = 0;
+                    this.convergeTarget = null;
+                } else if (state === 'SQL') {
+                    this.speedMultiplier = 1.1;
+                    this.connectionDistance = 120;
+                    this.flowBiasX = 0;
+                    this.convergeTarget = { x: this.width * 0.65, y: this.height * 0.5 };
+                } else if (state === 'RESULTS') {
+                    this.speedMultiplier = 1.5;
+                    this.connectionDistance = 110;
+                    this.flowBiasX = 0.2;
+                    this.convergeTarget = null;
+                } else if (state === 'DATA_FLOW') {
+                    this.speedMultiplier = 1.35;
+                    this.connectionDistance = 110;
+                    this.flowBiasX = 0.65; // Stream left-to-right
+                    this.convergeTarget = null;
+                } else if (state === 'TOPOLOGY') {
+                    this.speedMultiplier = 0.85;
+                    this.connectionDistance = 145; // Enhanced network links
+                    this.flowBiasX = 0;
+                    this.convergeTarget = null;
+                } else if (state === 'ARCHITECTURE') {
+                    this.speedMultiplier = 0.9;
+                    this.connectionDistance = 125;
+                    this.flowBiasX = 0;
+                    this.convergeTarget = { x: this.width * 0.72, y: this.height * 0.55 };
+                } else if (state === 'DISPERSE') {
+                    this.speedMultiplier = 1.2;
+                    this.connectionDistance = 90;
+                    this.flowBiasX = 0;
+                    this.convergeTarget = null;
+                } else if (state === 'MINIMAL') {
+                    this.speedMultiplier = 0.5;
+                    this.connectionDistance = 60;
+                    this.flowBiasX = 0;
+                    this.convergeTarget = null;
+                }
+            };
+
+            ParticleSystem.prototype.update = function () {
+                var w = this.width;
+                var h = this.height;
+                var isDark = this.theme === 'dark';
+
+                for (var i = 0; i < this.particles.length; i++) {
+                    var p = this.particles[i];
+
+                    // Base velocity with speed multiplier
+                    var vx = p.baseVx * this.speedMultiplier + this.flowBiasX;
+                    var vy = p.baseVy * this.speedMultiplier;
+
+                    // Convergence in SQL stage
+                    if (this.convergeTarget) {
+                        var cdx = this.convergeTarget.x - p.x;
+                        var cdy = this.convergeTarget.y - p.y;
+                        var cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+                        if (cdist > 30) {
+                            vx += (cdx / cdist) * 0.15;
+                            vy += (cdy / cdist) * 0.15;
+                        }
+                    }
+
+                    // Gentle mouse perturbation (desktop only)
+                    if (this.mouse.active) {
+                        var mdx = p.x - this.mouse.x;
+                        var mdy = p.y - this.mouse.y;
+                        var mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+                        if (mdist < 130 && mdist > 0) {
+                            var force = (1 - mdist / 130) * 0.6;
+                            vx += (mdx / mdist) * force;
+                            vy += (mdy / mdist) * force;
+                        }
+                    }
+
+                    // Move particle
+                    p.x += vx;
+                    p.y += vy;
+
+                    // Screen wrap
+                    if (p.x < -10) p.x = w + 10;
+                    if (p.x > w + 10) p.x = -10;
+                    if (p.y < -10) p.y = h + 10;
+                    if (p.y > h + 10) p.y = -10;
+                }
+            };
+
+            ParticleSystem.prototype.draw = function () {
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                var isDark = this.theme === 'dark';
+                var particles = this.particles;
+                var len = particles.length;
+                var maxDist = this.connectionDistance;
+
+                // 1. Draw subtle node connecting lines
+                this.ctx.lineWidth = 1;
+                for (var i = 0; i < len; i++) {
+                    var p1 = particles[i];
+                    for (var j = i + 1; j < len; j++) {
+                        var p2 = particles[j];
+                        var dx = p1.x - p2.x;
+                        var dy = p1.y - p2.y;
+                        var dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < maxDist) {
+                            var lineAlpha = (1 - dist / maxDist) * (isDark ? 0.14 : 0.07);
+                            if (isDark) {
+                                this.ctx.strokeStyle = 'rgba(41, 151, 255, ' + lineAlpha + ')';
+                            } else {
+                                this.ctx.strokeStyle = 'rgba(0, 113, 227, ' + lineAlpha + ')';
+                            }
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(p1.x, p1.y);
+                            this.ctx.lineTo(p2.x, p2.y);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+
+                // 2. Draw particle data nodes
+                for (var k = 0; k < len; k++) {
+                    var p = particles[k];
+                    var alpha = p.alpha;
+                    if (this.state === 'DISPERSE') alpha *= 0.45;
+                    if (this.state === 'MINIMAL') alpha *= 0.2;
+
+                    var fillStyle;
+                    if (isDark) {
+                        if (p.type === 0) fillStyle = 'rgba(41, 151, 255, ' + alpha * 0.85 + ')';
+                        else if (p.type === 1) fillStyle = 'rgba(34, 211, 238, ' + alpha * 0.8 + ')';
+                        else if (p.type === 2) fillStyle = 'rgba(167, 139, 250, ' + alpha * 0.75 + ')';
+                        else fillStyle = 'rgba(226, 232, 240, ' + alpha * 0.55 + ')';
+                    } else {
+                        if (p.type === 0) fillStyle = 'rgba(0, 113, 227, ' + alpha * 0.55 + ')';
+                        else if (p.type === 1) fillStyle = 'rgba(6, 182, 212, ' + alpha * 0.5 + ')';
+                        else if (p.type === 2) fillStyle = 'rgba(139, 92, 246, ' + alpha * 0.45 + ')';
+                        else fillStyle = 'rgba(100, 116, 139, ' + alpha * 0.4 + ')';
+                    }
+
+                    this.ctx.fillStyle = fillStyle;
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+            };
+
+            ParticleSystem.prototype.loop = function () {
+                if (!this.running) return;
+                this.update();
+                this.draw();
+                var self = this;
+                requestAnimationFrame(function () {
+                    self.loop();
+                });
+            };
+
+            ParticleSystem.prototype.start = function () {
+                if (this.running) return;
+                this.running = true;
+                this.loop();
+            };
+
+            ParticleSystem.prototype.stop = function () {
+                this.running = false;
+            };
+
+            function initParticles() {
+                var canvas = document.getElementById('bg-canvas');
+                if (!canvas) return;
+                window.particleSystem = new ParticleSystem(canvas);
+            }
+
+            /* ==========================================================
+               3. ATMOSPHERIC GLOW PARALLAX
+               ========================================================== */
+            function initAtmosphere() {
+                var b1 = document.getElementById('atmo-1');
+                var b2 = document.getElementById('atmo-2');
+                var b3 = document.getElementById('atmo-3');
+                if (!b1 || !b2 || !b3) return;
+
+                window.addEventListener('scroll', function () {
+                    var y = window.scrollY;
+                    b1.style.transform = 'translate3d(0, ' + (-y * 0.12) + 'px, 0)';
+                    b2.style.transform = 'translate3d(' + (-y * 0.08) + 'px, ' + (-y * 0.18) + 'px, 0)';
+                    b3.style.transform = 'translate3d(' + (y * 0.06) + 'px, ' + (-y * 0.1) + 'px, 0)';
+                }, { passive: true });
+            }
+
+            /* ==========================================================
+               4. NAVIGATION SCROLL & MOBILE MENU
+               ========================================================== */
+            function initNav() {
+                var nav = document.getElementById('nav');
+                var burger = document.getElementById('nav-hamburger');
+                var mobileMenu = document.getElementById('nav-links-mobile');
+
+                window.addEventListener('scroll', function () {
+                    if (window.scrollY > 40) {
+                        nav.style.borderBottomColor = 'var(--border-mid)';
+                    } else {
+                        nav.style.borderBottomColor = 'var(--border)';
+                    }
+                }, { passive: true });
+
+                if (burger && mobileMenu) {
+                    burger.addEventListener('click', function () {
+                        mobileMenu.classList.toggle('open');
+                    });
+                    mobileMenu.querySelectorAll('.nav-link').forEach(function (l) {
+                        l.addEventListener('click', function () {
+                            mobileMenu.classList.remove('open');
+                        });
+                    });
+                }
+            }
+
+            /* ==========================================================
+               5. HERO SCROLL ZOOM & PERSPECTIVE
+               ========================================================== */
+            function initHeroScroll() {
+                var win = document.getElementById('hero-win');
+                var content = document.getElementById('hero-text-content');
+                if (!win || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                window.addEventListener('scroll', function () {
+                    var progress = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.75)));
+                    // Scale window from 1.0 -> 1.15, rotateX 4deg -> 0deg
+                    var scale = 1 + progress * 0.14;
+                    var rotX = 4 - progress * 4;
+                    var transY = -progress * 28;
+                    win.style.transform = 'perspective(1400px) rotateX(' + rotX + 'deg) scale(' + scale + ') translateY(' + transY + 'px)';
+
+                    // Fade hero content
+                    if (content) {
+                        content.style.opacity = '' + (1 - progress * 1.25);
+                        content.style.transform = 'translateY(' + (-progress * 24) + 'px)';
+                    }
+                }, { passive: true });
+            }
+
+            /* ==========================================================
+               6. 400VH STICKY DEMO SCROLL & PARTICLE STATE DRIVER
+               ========================================================== */
+            function initDemoScroll() {
+                var section = document.getElementById('section-demo');
+                if (!section) return;
+
+                var textPanels = document.querySelectorAll('.demo-step-panel');
+                var visualPanels = document.querySelectorAll('.demo-visual-panel');
+                var progressBar = document.getElementById('demo-progress');
+                var winTitle = document.getElementById('demo-win-title');
+                var titles = [
+                    'TD Studio — SQL Workspace',
+                    'TD Studio — Query Execution (18.2ms)',
+                    'TD Studio — Real-time Telemetry Stream',
+                    'TD Studio — Super Tables Topology'
+                ];
+                var STEPS = 4;
+                var currentStep = -1;
+
+                function setStep(step) {
+                    if (step === currentStep) return;
+                    currentStep = step;
+
+                    if (winTitle && titles[step]) {
+                        winTitle.textContent = titles[step];
+                    }
+
+                    // Update panels
+                    textPanels.forEach(function (p) {
+                        var s = parseInt(p.getAttribute('data-step'), 10);
+                        var active = s === step;
+                        p.style.opacity = active ? '1' : '0';
+                        p.style.transform = active ? 'translateY(0)' : (s < step ? 'translateY(-16px)' : 'translateY(20px)');
+                        p.style.pointerEvents = active ? 'auto' : 'none';
+                    });
+
+                    visualPanels.forEach(function (p) {
+                        var s = parseInt(p.getAttribute('data-step'), 10);
+                        var active = s === step;
+                        p.style.opacity = active ? '1' : '0';
+                        p.style.transform = active ? 'scale(1) translateY(0)' : 'scale(0.97) translateY(10px)';
+                        p.style.pointerEvents = active ? 'auto' : 'none';
+                        if (active && s === 2) {
+                            setTimeout(function () {
+                                var path = document.getElementById('demo-chart-path');
+                                if (path) path.style.strokeDashoffset = '0';
+                            }, 250);
+                        }
+                    });
+
+                    // Sync Particle System states
+                    if (window.particleSystem) {
+                        if (step === 0) window.particleSystem.setState('SQL');
+                        else if (step === 1) window.particleSystem.setState('RESULTS');
+                        else if (step === 2) window.particleSystem.setState('DATA_FLOW');
+                        else if (step === 3) window.particleSystem.setState('TOPOLOGY');
+                    }
+                }
+
+                function onScroll() {
+                    var rect = section.getBoundingClientRect();
+                    var total = section.offsetHeight - window.innerHeight;
+                    if (total <= 0) return;
+
+                    var scrolled = -rect.top;
+                    var progress = Math.max(0, Math.min(1, scrolled / total));
+                    if (progressBar) progressBar.style.width = (progress * 100) + '%';
+
+                    if (rect.top < window.innerHeight && rect.bottom > 0) {
+                        setStep(Math.min(Math.floor(progress * STEPS), STEPS - 1));
+                    } else if (rect.top >= window.innerHeight && window.particleSystem) {
+                        window.particleSystem.setState('HERO');
+                    } else if (rect.bottom <= 0 && window.particleSystem) {
+                        var arch = document.getElementById('section-architecture');
+                        if (arch) {
+                            var archRect = arch.getBoundingClientRect();
+                            if (archRect.top < window.innerHeight * 0.7 && archRect.bottom > window.innerHeight * 0.3) {
+                                window.particleSystem.setState('ARCHITECTURE');
+                                return;
+                            }
+                        }
+                        // After demo section: check if in download or footer
+                        var dl = document.getElementById('section-download');
+                        if (dl) {
+                            var dlRect = dl.getBoundingClientRect();
+                            if (dlRect.top < window.innerHeight && dlRect.bottom > 0) {
+                                window.particleSystem.setState('DISPERSE');
+                                return;
+                            }
+                        }
+                        var gh = document.getElementById('section-github');
+                        if (gh) {
+                            var ghRect = gh.getBoundingClientRect();
+                            if (ghRect.top < window.innerHeight) {
+                                window.particleSystem.setState('MINIMAL');
+                                return;
+                            }
+                        }
+                        window.particleSystem.setState('HERO');
+                    }
+                }
+
+                window.addEventListener('scroll', onScroll, { passive: true });
+                onScroll();
+            }
+
+            /* ==========================================================
+               7. DATA FETCHING (latest.json) & DOWNLOAD CARDS
+               ========================================================== */
+            function detectOS() {
+                var ua = navigator.userAgent;
+                if (/Macintosh|Mac OS X/i.test(ua)) return 'mac';
+                if (/Windows|Win32/i.test(ua)) return 'windows';
+                return 'unknown';
+            }
+
+            function buildDownloadCards(data) {
+                var container = document.getElementById('download-cards-container');
+                if (!container) return;
+
+                var detected = detectOS();
+                var platforms = data.platforms || {};
+                var version = data.version || 'v0.1.1';
+
+                var configs = [
+                    {
+                        key: 'darwin-aarch64',
+                        os: 'mac',
+                        platform: 'macOS',
+                        arch: 'Apple Silicon',
+                        desc: 'M1 / M2 / M3 / M4 原生构建',
+                        btnLabel: '下载 Apple Silicon 版',
+                        icon: '<svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.96.04-2.16.65-2.84 1.44-.61.7-.13 1.77.16 2.82 1.08.09 2.05-.64 2.67-1.39z"/></svg>'
+                    },
+                    {
+                        key: 'darwin-x86_64',
+                        os: 'mac',
+                        platform: 'macOS',
+                        arch: 'Intel x86_64',
+                        desc: 'Intel 处理器通用构建',
+                        btnLabel: '下载 Intel x64 版',
+                        icon: '<svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.96.04-2.16.65-2.84 1.44-.61.7-.13 1.77.16 2.82 1.08.09 2.05-.64 2.67-1.39z"/></svg>'
+                    },
+                    {
+                        key: 'windows-x86_64',
+                        os: 'windows',
+                        platform: 'Windows',
+                        arch: 'x64 架构',
+                        desc: 'Windows 10 / 11 64位安装包',
+                        btnLabel: '下载 Windows 版',
+                        icon: '<svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>'
+                    }
+                ];
+
+                var grid = document.createElement('div');
+                grid.className = 'download-grid';
+
+                configs.forEach(function (p) {
+                    var pData = platforms[p.key] || {};
+                    var url = pData.url || 'https://github.com/huangdungui/TD-Studio-Release/releases/latest';
+                    var isDetected = (p.os === detected);
+
+                    var card = document.createElement('div');
+                    card.className = 'download-card reveal' + (isDetected ? ' highlight' : '');
+
+                    card.innerHTML =
+                        '<div style="flex:1;">' +
+                        '<div style="margin-bottom:20px; color:var(--accent);">' + p.icon + '</div>' +
+                        '<div class="download-platform">' + p.platform + '</div>' +
+                        '<div class="download-arch">' + p.arch + '</div>' +
+                        '<div class="download-os">' + p.desc + '</div>' +
+                        '</div>' +
+                        '<a class="download-btn" href="' + url + '" download>' +
+                        '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                        p.btnLabel + '</a>' +
+                        '<div class="download-version">' + version + (isDetected ? ' &middot; 当前推荐' : '') + '</div>';
+
+                    grid.appendChild(card);
+                });
+
+                container.innerHTML = '';
+                container.appendChild(grid);
+                setTimeout(initReveal, 50);
+            }
+
+            function populateChangelog(data) {
+                var clV = document.getElementById('cl-version');
+                var clD = document.getElementById('cl-date');
+                var clN = document.getElementById('cl-notes');
+                if (clV) clV.textContent = data.version;
+                if (clD && data.pub_date) {
+                    var d = new Date(data.pub_date);
+                    clD.textContent = '发布时间：' + d.getFullYear() + ' 年 ' + (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日';
+                }
+                if (clN) clN.textContent = (data.notes || '').replace(/\\n/g, '\n');
+            }
+
+            function fetchLatest() {
+                fetch('./latest.json')
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        var vEl = document.getElementById('hero-version-num');
+                        if (vEl) vEl.textContent = data.version;
+                        buildDownloadCards(data);
+                        populateChangelog(data);
+                    })
+                    .catch(function () {
+                        var fd = {
+                            version: 'v0.1.1',
+                            pub_date: '2026-09-05T07:31:27.397Z',
+                            notes: 'TD Studio v0.1.1\n\u00b7 升级为全屏沉浸式数据空间动态视觉\n\u00b7 交互式滚动演进与 Canvas 数据流粒子网络\n\u00b7 原生支持 macOS (Apple Silicon & Intel) 及 Windows x64',
+                            platforms: {
+                                'darwin-aarch64': { url: 'https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD-Studio_0.1.1_darwin-aarch64.tar.gz' },
+                                'darwin-x86_64': { url: 'https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD-Studio_0.1.1_darwin-x86_64.tar.gz' },
+                                'windows-x86_64': { url: 'https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD Studio_0.1.1_x64-setup.exe' }
+                            }
+                        };
+                        var vEl = document.getElementById('hero-version-num');
+                        if (vEl) vEl.textContent = fd.version;
+                        buildDownloadCards(fd);
+                        populateChangelog(fd);
+                    });
+            }
+
+            /* ==========================================================
+               8. SPONSORS DATA & INTERSECTION OBSERVER
+               ========================================================== */
+            var sponsors = [
+                { name: 'MapleDev', amount: 50, date: '2026-08-01' },
+                { name: 'ClearSky', amount: 100, date: '2026-08-03' },
+                { name: 'T.Huang', amount: 20, date: '2026-08-05' },
+                { name: 'Zephyr_M', amount: 66, date: '2026-08-07' },
+                { name: 'StarlightX', amount: 128, date: '2026-08-09' },
+                { name: 'Dev.Coder', amount: 30, date: '2026-08-10' },
+                { name: 'Aleph_Zero', amount: 256, date: '2026-08-12' },
+                { name: 'SilverWave', amount: 88, date: '2026-08-13' },
+                { name: 'Notion01', amount: 10, date: '2026-08-15' },
+                { name: 'BlueStream', amount: 200, date: '2026-08-17' },
+                { name: 'FoxDatabase', amount: 168, date: '2026-08-18' },
+                { name: 'QuietPulse', amount: 500, date: '2026-08-19' },
+                { name: 'NorthernIO', amount: 388, date: '2026-08-20' },
+                { name: 'Pixel_Hao', amount: 520, date: '2026-08-21' },
+                { name: 'DeepMetric', amount: 300, date: '2026-08-22' },
+                { name: 'VortexDB', amount: 666, date: '2026-08-23' },
+                { name: 'LunarCode', amount: 688, date: '2026-08-24' },
+                { name: 'DataFlowX', amount: 999, date: '2026-08-25' },
+                { name: 'StellarOps', amount: 1000, date: '2026-08-26' },
+                { name: 'AnonymousFan', amount: 800, date: '2026-08-28' }
+            ];
+
+            function initSponsors() {
+                var container = document.getElementById('modal-sponsors-scroll');
+                if (!container) return;
+                container.innerHTML = '';
+                // Duplicate array for infinite seamless looping
+                var loopSponsors = sponsors.concat(sponsors);
+                loopSponsors.forEach(function (sp) {
+                    var chip = document.createElement('div');
+                    chip.className = 'modal-sponsor-chip';
+                    chip.innerHTML =
+                        '<div class="modal-sponsor-avatar">' + sp.name.slice(0, 2).toUpperCase() + '</div>' +
+                        '<span class="modal-sponsor-name">' + sp.name + '</span>' +
+                        '<span class="modal-sponsor-amount">¥' + sp.amount + '</span>';
+                    container.appendChild(chip);
+                });
+
+                if (window.sponsorsTickerActive) return;
+                window.sponsorsTickerActive = true;
+                var scrollPos = 0;
+                var paused = false;
+                container.addEventListener('mouseenter', function () { paused = true; });
+                container.addEventListener('mouseleave', function () { paused = false; });
+                container.addEventListener('touchstart', function () { paused = true; }, { passive: true });
+                container.addEventListener('touchend', function () { paused = false; }, { passive: true });
+
+                function autoScroll() {
+                    if (!paused && container.scrollWidth > container.clientWidth) {
+                        scrollPos += 0.65;
+                        var half = container.scrollWidth / 2;
+                        if (scrollPos >= half) {
+                            scrollPos = 0;
+                        }
+                        container.scrollLeft = scrollPos;
+                    }
+                    requestAnimationFrame(autoScroll);
+                }
+                requestAnimationFrame(autoScroll);
+            }
+
+            function initReveal() {
+                var els = document.querySelectorAll('.reveal:not(.visible)');
+                if ('IntersectionObserver' in window) {
+                    var obs = new IntersectionObserver(function (entries) {
+                        entries.forEach(function (e) {
+                            if (e.isIntersecting) {
+                                e.target.classList.add('visible');
+                                obs.unobserve(e.target);
+                            }
+                        });
+                    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+                    els.forEach(function (el) { obs.observe(el); });
+                } else {
+                    els.forEach(function (el) { el.classList.add('visible'); });
+                }
+            }
+
+            function initChartAnimations() {
+                var paths = document.querySelectorAll('.chart-path-animated');
+                if ('IntersectionObserver' in window) {
+                    var obs = new IntersectionObserver(function (entries) {
+                        entries.forEach(function (e) {
+                            if (e.isIntersecting) {
+                                e.target.classList.add('drawn');
+                                obs.unobserve(e.target);
+                            }
+                        });
+                    }, { threshold: 0.3 });
+                    paths.forEach(function (p) { obs.observe(p); });
+                } else {
+                    paths.forEach(function (p) { p.classList.add('drawn'); });
+                }
+            }
+
+            function initModal() {
+                var overlay = document.getElementById('sponsor-modal');
+                var openBtn = document.getElementById('open-sponsor-modal');
+                var closeX = document.getElementById('modal-close-x');
+                var closeBtn = document.getElementById('modal-close-btn');
+
+                function openModal() {
+                    overlay.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                }
+
+                function closeModal() {
+                    overlay.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+
+                if (openBtn) openBtn.addEventListener('click', openModal);
+                if (closeX) closeX.addEventListener('click', closeModal);
+                if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+                overlay.addEventListener('click', function (e) {
+                    if (e.target === overlay) closeModal();
+                });
+
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+                });
+            }
+
+            function countUp(el, target, prefix, duration) {
+                prefix = prefix || '';
+                duration = duration || 1500;
+                var step = target / (duration / 16);
+                var current = 0;
+                var timer = setInterval(function () {
+                    current += step;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    el.textContent = prefix + Math.floor(current).toLocaleString();
+                }, 16);
+            }
+
+            function initCountUp() {
+                // Count-up handler preserved
+            }
+
+            /* ==========================================================
+               9. INITIALIZATION
+               ========================================================== */
+            document.addEventListener('DOMContentLoaded', function () {
+                initTheme();
+                initParticles();
+                initAtmosphere();
+                initNav();
+                initHeroScroll();
+                initDemoScroll();
+                fetchLatest();
+                initSponsors();
+                initReveal();
+                initChartAnimations();
+                initModal();
+                initCountUp();
+            });
+        })();
+    </script>
 </body>
+
 </html>
