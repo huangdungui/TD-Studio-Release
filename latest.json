@@ -1,0 +1,19 @@
+{
+  "version": "v0.1.1",
+  "notes": "TD Studio v0.1.1 发布\n包含性能优化与功能更新。",
+  "pub_date": "2026-09-05T07:31:27.397Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSOWloYTBMbXd2a0xCYVVMQXJWZGd2d3pCOVdTMDNmb3NTK0IyOVdJcWFXdFN5TkltWmtBN0s2TGpicUJETURQK3ZnWHd3ekZVbTczNm1hVFUwZ2g1dzhIQzU2WWV3dndRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg4NTkyODkyCWZpbGU6VEQgU3R1ZGlvLmFwcC50YXIuZ3oKOWdybEtEUW1HSGFJdDREUFhZdmRJT2VtYldFa082SzJLUTU5a3crMU53a2d6U1BuQmNCY0ovK3ZxcmZIVE1hSWJrMVVicDZFbnRGb291QzNOb1MrRHc9PQo=",
+      "url": "https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD-Studio_0.1.1_darwin-aarch64.tar.gz"
+    },
+    "darwin-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSOWloYTBMbXd2a0NTNG9ibVk1a3A5SkpFQmhHbk4vRFBvbzBDUDdoZnhMbVUrZktFWjdmR1duMnNzUEQrT3VKRTBBd3Z1RCtzai9kLzM0QSt4bUdYR05nWUtQRXJSV1FjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg4NTkyNzUxCWZpbGU6VEQgU3R1ZGlvLmFwcC50YXIuZ3oKMVNRQkZCK0swcnh3SzZWa0grUUdVZUt3MlpYRVBiRmdJNVRhWGttbEM5WmJ3TTY4dXBuQmwzaEZxUmJuUGFqemx0MHUwU1pvc05hc1hFSlZ3ZGd3RGc9PQo=",
+      "url": "https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD-Studio_0.1.1_darwin-x86_64.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSOWloYTBMbXd2a0RYeXY1c280aTk1RTFkM2JXS0k4SHJRQXo3QkdCdGpWTEVieTEzN0F6VGxNQWJJUThMQmFvVjM2Ry9NZ01vanFPMWRoV3BJbHdWZDl3dHkxOFJ2UWdZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg4NTkzNDUwCWZpbGU6VEQgU3R1ZGlvXzAuMS4xX3g2NC1zZXR1cC5leGUKV28wVnZRcGtoSE5TK2F5dnFVRHIxSVhYdkdaN3BWYnlncXR3VjI0elZaS1IvZ0lLejNhMGpLVncrSmgzSVFGb1dtRWdPOWdmUzFuOTl5OTZvbEZEQ1E9PQo=",
+      "url": "https://huangdungui.github.io/TD-Studio-Release/downloads/v0.1.1/TD Studio_0.1.1_x64-setup.exe"
+    }
+  }
+}
