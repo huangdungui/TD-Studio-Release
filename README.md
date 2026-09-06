@@ -8,6 +8,10 @@
 
 一款面向 TDengine 的现代化、轻量级、本地优先的桌面数据库客户端
 
+<p align="center">
+  🇨🇳 中文 &nbsp;|&nbsp; <a href="README_EN.md">🇺🇸 English</a>
+</p>
+
 [![Release](https://img.shields.io/badge/Release-v0.1.1-blue.svg?style=flat-square)](https://github.com/huangdungui/TD-Studio-Release/releases)
 [![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows-lightgrey.svg?style=flat-square)](https://huangdungui.github.io/TD-Studio-Release/)
 [![Architecture](https://img.shields.io/badge/Tech-Tauri%20v2%20%2B%20Rust%20%2B%20Vue%203-emerald.svg?style=flat-square)](#🏗️-architecture--技术架构)
@@ -47,7 +51,48 @@
 
 ---
 
+## 🏗️ Architecture / 技术架构
 
+TD Studio **不使用 Electron**，而是基于 **Tauri v2 + Rust + Vue 3** 现代桌面架构构建。
+
+通过使用操作系统原生 Webview 进行界面渲染，并由 Rust 负责底层系统调用与核心逻辑，在大幅削减应用安装包体积和运行时内存开销的同时，保持了前端生态的灵活性与响应速度。
+
+```mermaid
+graph TD
+    subgraph Frontend ["前端渲染层 (Webview)"]
+        UI["Vue 3 + TypeScript (Vite + Pinia)"]
+        Components["Element Plus / Monaco Editor / ECharts"]
+        UI --> Components
+    end
+
+    subgraph Bridge ["跨进程桥接 (IPC)"]
+        IPC["Tauri v2 Inter-Process Communication"]
+    end
+
+    subgraph Native ["原生核心层 (Native Backend)"]
+        RustCore["Rust Core Engine"]
+    end
+
+    subgraph Database ["数据存储层"]
+        TDengine["TDengine Database Server (Local / Remote / VPC)"]
+    end
+
+    Components --> IPC
+    IPC --> RustCore
+    RustCore --> TDengine
+```
+
+### 核心技术栈
+
+* **Desktop Framework**：[Tauri v2](https://v2.tauri.app/)
+* **System Language**：[Rust](https://www.rust-lang.org/)
+* **Frontend Framework**：[Vue 3](https://vuejs.org/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vitejs.dev/)
+* **State Management**：[Pinia](https://pinia.vuejs.org/)
+* **UI Components**：[Element Plus](https://element-plus.org/)
+* **SQL Editor**：[Monaco Editor](https://microsoft.github.io/monaco-editor/)
+* **Visualization**：[ECharts](https://echarts.apache.org/)
+
+---
 
 ## 🛡️ Local-First & Privacy / 本地优先与隐私
 
